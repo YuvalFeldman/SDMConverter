@@ -1,0 +1,12 @@
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\bin\Debug\SDM.exe.config
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\bin\Debug\SDM.exe
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\bin\Debug\SDM.pdb
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\bin\Debug\Ninject.dll
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\bin\Debug\Ninject.xml
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\obj\Debug\SDM.Properties.Resources.resources
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\obj\Debug\SDM.csproj.GenerateResource.Cache
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\obj\Debug\SDM.exe
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\obj\Debug\SDM.pdb
+C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\SDM\obj\Debug\SDM.csprojResolveAssemblyReference.cache
