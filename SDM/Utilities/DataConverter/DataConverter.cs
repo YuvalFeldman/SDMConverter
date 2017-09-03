@@ -49,7 +49,14 @@ namespace SDM.Utilities.DataConverter
         public List<string> ConvertFullDatabaseToCsv(List<FullDatabase> data)
         {
             var csvData = new List<string>();
-            throw new System.NotImplementedException();
+            foreach (var databaseRow in data)
+            {
+                var databaseRowString = $"{databaseRow.ClientId},{databaseRow.InvoiceNumber},{databaseRow.PaymentDue},{databaseRow.PaymentDueDate}";
+                databaseRowString = databaseRow.Payments.Aggregate(databaseRowString, (current, paymentDateLatencyPaid) => $"{current},{paymentDateLatencyPaid.PaymentDate},{paymentDateLatencyPaid.PaymentPaid},{paymentDateLatencyPaid.Invoice}");
+                csvData.Add(databaseRowString);
+            }
+
+            return csvData;
         }
 
         public List<string> ConvertSummedDatabaseToCsv(List<SummedDbPartner> data)
