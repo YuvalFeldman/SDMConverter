@@ -9,12 +9,12 @@ namespace SDM.Models
     public class SummedDbPartner
     {
         public string ClientName { get; set; }
-        public List<SummedDatabase> SummedDbPerMonth {get; set; }
+        public Dictionary<MonthEnum, SummedDatabase> SummedDbPerMonth { get; set; }
     }
 
     public class SummedDatabase
     {
-        public string Month { get; set; }
+        public MonthEnum Month { get; set; }
         public string InvoiceNumber { get; set; }
         public string PaymentDue { get; set; }
         public string PaymentPaid { get; set; }

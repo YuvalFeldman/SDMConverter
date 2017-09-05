@@ -61,7 +61,23 @@ namespace SDM.Utilities.DataConverter
 
         public List<string> ConvertSummedDatabaseToCsv(List<SummedDbPartner> data)
         {
-            throw new System.NotImplementedException();
+            //todo: all partners in same file? seperate files? the list is different clients
+            var csvData = new List<string>();
+            foreach (var databaseRow in data)
+            {
+                if (!databaseRow.SummedDbPerMonth.Any())
+                {
+                    continue;
+                }
+                var currentMonth = databaseRow.SummedDbPerMonth.Min(summedDb => summedDb.Value.Month);
+                var databaseRowString = $"{databaseRow.ClientName} ,{currentMonth}";
+                csvData.Add(databaseRowString);
+                var currentPartnerMonthData = databaseRow.SummedDbPerMonth[currentMonth];
+                databaseRowString = $"{currentPartnerMonthData.InvoiceNumber},{currentPartnerMonthData.PaymentDue},{currentPartnerMonthData.PaymentPaid},{currentPartnerMonthData.PaidBelow30},{currentPartnerMonthData.PaidOver30Below60},{currentPartnerMonthData.PaidOver60Below90},{currentPartnerMonthData.PaidOver90}";
+                csvData.Add(databaseRowString);
+            }
+
+            return csvData;
         }
 
         public List<FullDatabase> ConvertCsvToClientDataModel(List<string> data)

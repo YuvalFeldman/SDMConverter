@@ -69,6 +69,7 @@
     <Compile Include="Models\ExportTypes.cs" />
     <Compile Include="Models\FullDatabase.cs" />
     <Compile Include="Models\ImportTypes.cs" />
+    <Compile Include="Models\MonthEnum.cs" />
     <Compile Include="Models\SummedDatabase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
