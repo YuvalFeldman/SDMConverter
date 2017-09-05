@@ -57,6 +57,8 @@
     <Compile Include="DAL\FileSystemController\IFileSystemController.cs" />
     <Compile Include="DAL\FileWizard\FileWizard.cs" />
     <Compile Include="DAL\FileWizard\IFileWizard.cs" />
+    <Compile Include="Database\Database.cs" />
+    <Compile Include="Database\IDatabase.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

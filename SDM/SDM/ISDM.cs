@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SDM.SDM
+﻿namespace SDM.SDM
 {
     public interface ISDM
     {

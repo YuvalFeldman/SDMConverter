@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SDM.Models
 {
     public class ClientModel
     {
+        public string InvoiceNumber { get; set; }
+
+        public DateTime InvoiceDate { get; set; }
+
+        public int PaymentTerms { get; set; }
+
+        public int AmountDue { get; set; }
     }
 }

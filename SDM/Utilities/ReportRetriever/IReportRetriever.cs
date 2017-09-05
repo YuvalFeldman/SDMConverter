@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using SDM.Models;
 
 namespace SDM.Utilities.ReportRetriever
 {
     public interface IReportRetriever
     {
-        List<List<string>> GetSummedDebtReport(List<List<string>> database);
+        List<FullDatabase> GetFullDebtReport();
+        List<SummedDatabase> GetSummedDebtReport();
     }
 }

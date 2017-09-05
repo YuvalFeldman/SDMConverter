@@ -1,4 +1,5 @@
 ﻿using Ninject.Modules;
+using SDM.Database;
 using SDM.DAL.FileSystemController;
 using SDM.DAL.FileWizard;
 using SDM.Utilities.DataConverter;
@@ -10,10 +11,11 @@ namespace SDM.Config
     {
         public override void Load()
         {
-            Bind<IDataConverter>().To<DataConverter>().InSingletonScope();
             Bind<IFileSystemController>().To<FileSystemController>().InSingletonScope();
-            Bind<IFileWizard>().To<FileWizard>().InSingletonScope();
+            Bind<IDataConverter>().To<DataConverter>().InSingletonScope();
+            Bind<IDatabase>().To<Database.Database>().InSingletonScope();
             Bind<IDataImporter>().To<DataImporter>().InSingletonScope();
+            Bind<IFileWizard>().To<FileWizard>().InSingletonScope();
         }
     }
 }
