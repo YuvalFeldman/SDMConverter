@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SDM.Models
 {
-    public class FullDatabase
+    public class FullDatabaseRow
     {
         public string ClientId { get; set; }
         public string InvoiceNumber { get; set; }

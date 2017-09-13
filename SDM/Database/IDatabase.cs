@@ -5,6 +5,6 @@ namespace SDM.Database
 {
     public interface IDatabase
     {
-        Dictionary<string, FullDatabase> Get();
+        Dictionary<string, FullDatabaseRow> Get();
     }
 }

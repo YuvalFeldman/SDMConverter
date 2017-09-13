@@ -5,7 +5,7 @@ namespace SDM.Utilities.ReportRetriever
 {
     public interface IReportRetriever
     {
-        List<FullDatabase> GetFullDebtReport();
-        List<SummedDatabase> GetSummedDebtReport();
+        List<FullDatabaseRow> GetFullDebtReport();
+        List<SummedDatabasePartner> GetSummedDebtReport();
     }
 }

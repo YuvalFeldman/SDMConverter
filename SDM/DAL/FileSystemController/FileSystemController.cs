@@ -28,7 +28,7 @@ namespace SDM.DAL.FileSystemController
             _saveFileDialog = new SaveFileDialog { Filter = @"CSV files (*.csv)|*.csv" };
         }
 
-        public List<List<string>> ReadFile()
+        public List<ClientModel> ReadClientLog()
         {
             if (_openFileDialog.ShowDialog() != DialogResult.OK)
             {
@@ -37,62 +37,60 @@ namespace SDM.DAL.FileSystemController
 
             var filePath = _openFileDialog.FileName;
             var fileContent = _fileWizard.ReadFile(filePath);
-            var parsedFileContent = _dataConverter.ConvertCsvToArray(fileContent);
+            var parsedFileContent = _dataConverter.ConvertCsvToClientDataModel(fileContent);
 
             return parsedFileContent;
         }
 
-        public void LogData(List<List<string>> data, ImportTypes importType)
+        public List<CenturionModel> ReadCenturionLog()
         {
-            var logFolder = $".\\ImportLogs\\{importType}";
+            if (_openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return null;
+            }
+
+            var filePath = _openFileDialog.FileName;
+            var fileContent = _fileWizard.ReadFile(filePath);
+            var parsedFileContent = _dataConverter.ConvertCsvToCenturionModel(fileContent);
+
+            return parsedFileContent;
+        }
+
+        public void LogData(List<ClientModel> data)
+        {
+            var logFolder = $".\\ImportLogs\\{ImportTypes.ClientData}";
 
             var existingLogs = _fileWizard.GetFileNamesInDirectory(logFolder);
             var fileCounter = existingLogs.Count > 0
                 ? existingLogs.Select(name => int.Parse(name.Split('_')[0])).Max()
                 : 0;
 
-            var logName = $"{fileCounter}_{importType}_{(int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds}";
+            var logName = $"{fileCounter}_{ImportTypes.ClientData}_{(int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds}";
             var fullFilePath = $"{logFolder}\\{logName}.csv";
 
-            var csvData = _dataConverter.ConvertArrayToCsv(data);
+            var csvData = _dataConverter.ConvertClientDataModelToCsv(data);
 
             _fileWizard.WriteToFile(fullFilePath, csvData);
         }
 
-        public void AddDataToDb(List<List<string>> updatedDatabase)
+        public void LogData(List<CenturionModel> data)
         {
-            var csvDbContent = _dataConverter.ConvertArrayToCsv(updatedDatabase);
-            _fileWizard.WriteToFile(DbPath, csvDbContent);
+            var logFolder = $".\\ImportLogs\\{ImportTypes.CenturionDebtCollection}";
+
+            var existingLogs = _fileWizard.GetFileNamesInDirectory(logFolder);
+            var fileCounter = existingLogs.Count > 0
+                ? existingLogs.Select(name => int.Parse(name.Split('_')[0])).Max()
+                : 0;
+
+            var logName = $"{fileCounter}_{ImportTypes.CenturionDebtCollection}_{(int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds}";
+            var fullFilePath = $"{logFolder}\\{logName}.csv";
+
+            var csvData = _dataConverter.ConvertCenturionModelToCsv(data);
+
+            _fileWizard.WriteToFile(fullFilePath, csvData);
         }
 
-        public void RebootDbFromLogs()
-        {
-            var dbContent = GetDatabase();
-
-            var clientDataLogPaths = _fileWizard.GetFileNamesInDirectory($".\\ImportLogs\\{ImportTypes.ClientData}");
-            var clientDataLogs = clientDataLogPaths.Select(path => _fileWizard.ReadFile(path));
-
-            dbContent = clientDataLogs.Select(clientDataLog => _dataConverter.ConvertCsvToArray(clientDataLog)).Aggregate(dbContent, (current, data) => _dataImporter.GetDbUpdatedWithClientData(current, data));
-
-            var centurionDebtCollectionLogPaths = _fileWizard.GetFileNamesInDirectory($".\\ImportLogs\\{ImportTypes.CenturionDebtCollection}");
-            var centurionDebtCollectionDataLogs = centurionDebtCollectionLogPaths.Select(path => _fileWizard.ReadFile(path));
-
-            dbContent = centurionDebtCollectionDataLogs.Select(clientDataLog => _dataConverter.ConvertCsvToArray(clientDataLog)).Aggregate(dbContent, (current, data) => _dataImporter.GetDbUpdatedWithcenturionDebtCollection(current, data));
-
-            var csvDbContent = _dataConverter.ConvertArrayToCsv(dbContent);
-
-            _fileWizard.WriteToFile(DbPath, csvDbContent);
-        }
-
-        public List<List<string>> GetDatabase()
-        {
-            var dbContent = _fileWizard.ReadFile(DbPath);
-            var parsedDb = _dataConverter.ConvertCsvToArray(dbContent);
-
-            return parsedDb;
-        }
-
-        public void WriteToFile(List<List<string>> data)
+        public void WriteToFile(List<ClientModel> data)
         {
             if (_saveFileDialog.ShowDialog() != DialogResult.OK)
             {
@@ -100,7 +98,43 @@ namespace SDM.DAL.FileSystemController
             }
 
             var filePath = _openFileDialog.FileName;
-            var csvFileContent = _dataConverter.ConvertArrayToCsv(data);
+            var csvFileContent = _dataConverter.ConvertClientDataModelToCsv(data);
+            _fileWizard.WriteToFile(filePath, csvFileContent);
+        }
+
+        public void WriteToFile(List<CenturionModel> data)
+        {
+            if (_saveFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            var filePath = _openFileDialog.FileName;
+            var csvFileContent = _dataConverter.ConvertCenturionModelToCsv(data);
+            _fileWizard.WriteToFile(filePath, csvFileContent);
+        }
+
+        public void WriteToFile(List<FullDatabaseRow> data)
+        {
+            if (_saveFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            var filePath = _openFileDialog.FileName;
+            var csvFileContent = _dataConverter.ConvertFullDatabaseToCsv(data);
+            _fileWizard.WriteToFile(filePath, csvFileContent);
+        }
+
+        public void WriteToFile(List<SummedDatabasePartner> data)
+        {
+            if (_saveFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            var filePath = _openFileDialog.FileName;
+            var csvFileContent = _dataConverter.ConvertSummedDatabaseToCsv(data);
             _fileWizard.WriteToFile(filePath, csvFileContent);
         }
     }

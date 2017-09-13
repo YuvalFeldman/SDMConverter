@@ -5,9 +5,9 @@ namespace SDM.Utilities.DataConverter
 {
     public interface IDataConverter
     {
-        List<string> ConvertFullDatabaseToCsv(List<FullDatabase> data);
+        List<string> ConvertFullDatabaseToCsv(List<FullDatabaseRow> data);
 
-        List<string> ConvertSummedDatabaseToCsv(List<SummedDbPartner> data);
+        List<string> ConvertSummedDatabaseToCsv(List<SummedDatabasePartner> data);
 
         List<ClientModel> ConvertCsvToClientDataModel(List<string> data);
 

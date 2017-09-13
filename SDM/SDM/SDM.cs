@@ -21,43 +21,28 @@ namespace SDM.SDM
 
         public void ImportClientData()
         {
-            AddDataToDb(ImportTypes.ClientData);
+            var data = _fileSystemController.ReadClientLog();
+            _fileSystemController.LogData(data);
+            _dataImporter.UpdateDatabase(data);
         }
 
         public void ImportcenturionDebtCollection()
         {
-            AddDataToDb(ImportTypes.CenturionDebtCollection);
+            var data = _fileSystemController.ReadCenturionLog();
+            _fileSystemController.LogData(data);
+            _dataImporter.UpdateDatabase(data);
         }
 
-        public void GetDebtReport()
+        public void GetFullDebtReport()
         {
-            var database = _fileSystemController.GetDatabase();
-            _fileSystemController.WriteToFile(database);
+            var report = _reportRetriever.GetFullDebtReport();
+            _fileSystemController.WriteToFile(report);
         }
 
         public void GetSummedDebtReport()
         {
-            var database = _fileSystemController.GetDatabase();
-            var summedDatabase = _reportRetriever.GetSummedDebtReport(database);
-            _fileSystemController.WriteToFile(summedDatabase);
-        }
-
-        private void AddDataToDb(ImportTypes importType)
-        {
-            var log = _fileSystemController.ReadFile();
-            _fileSystemController.LogData(log, importType);
-
-            var currentDatabase = _fileSystemController.GetDatabase();
-            var updatedDatabase = GetUpdatedDatabase(currentDatabase, log, importType);
-            _fileSystemController.AddDataToDb(updatedDatabase);
-        }
-
-        private List<List<string>> GetUpdatedDatabase(List<List<string>> database, List<List<string>> newData,
-            ImportTypes importType)
-        {
-            return importType.Equals(ImportTypes.ClientData) ?
-                _dataImporter.GetDbUpdatedWithClientData(database, newData) :
-                _dataImporter.GetDbUpdatedWithcenturionDebtCollection(database, newData);
+            var report = _reportRetriever.GetSummedDebtReport();
+            _fileSystemController.WriteToFile(report);
         }
     }
 }

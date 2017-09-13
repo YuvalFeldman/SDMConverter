@@ -23,7 +23,7 @@ namespace SDM.Utilities.DataConverter
         private const string AmountDue = "Amount due";
         private const string AmountPaid = "Amount paid";
 
-        public List<string> ConvertFullDatabaseToCsv(List<FullDatabase> data)
+        public List<string> ConvertFullDatabaseToCsv(List<FullDatabaseRow> data)
         {
             var csvData = new List<string>();
             var header = $"{ClientId},{InvoiceNumber},{PaymentDue},{PaymentDueDate}";
@@ -38,7 +38,7 @@ namespace SDM.Utilities.DataConverter
             return csvData;
         }
 
-        public List<string> ConvertSummedDatabaseToCsv(List<SummedDbPartner> data)
+        public List<string> ConvertSummedDatabaseToCsv(List<SummedDatabasePartner> data)
         {
             //todo: all partners in same file? seperate files? the list is different clients
             var csvData = new List<string> { $"{InvoiceNumber},{PaymentDue},{PaymentPaid},{LateBelow30},{LateBelow60},{LateBelow90},{LateAbove90}" };

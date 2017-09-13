@@ -15,14 +15,14 @@ namespace SDM.Utilities.DataImporter
             _database = database;
         }
 
-        public void UpdateDatabaseWithClientData(List<ClientModel> clientData)
+        public void UpdateDatabase(List<ClientModel> clientData)
         {
             var database = _database.Get();
             var newInvoiceFilteredClientData = clientData.Where(dataRow => !database.ContainsKey(dataRow.InvoiceNumber));
 
             foreach (var clientModel in newInvoiceFilteredClientData)
             {
-                var fullDbRow = new FullDatabase
+                var fullDbRow = new FullDatabaseRow
                 {
                     InvoiceNumber = clientModel.InvoiceNumber,
                     PaymentDue = clientModel.AmountDue,
@@ -37,7 +37,7 @@ namespace SDM.Utilities.DataImporter
             }
         }
 
-        public void UpdateDatabaseWithCenturionFile(List<CenturionModel> centurionData)
+        public void UpdateDatabase(List<CenturionModel> centurionData)
         {
             var database = _database.Get();
             var newInvoiceFilteredCenturionData = centurionData.Where(dataRow => !database.ContainsKey(dataRow.InvoiceNumber));

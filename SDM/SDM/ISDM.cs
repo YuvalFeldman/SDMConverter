@@ -6,7 +6,7 @@
 
         void ImportcenturionDebtCollection();
 
-        void GetDebtReport();
+        void GetFullDebtReport();
 
         void GetSummedDebtReport();
     }

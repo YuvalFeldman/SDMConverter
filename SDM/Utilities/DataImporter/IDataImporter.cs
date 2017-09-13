@@ -5,8 +5,8 @@ namespace SDM.Utilities.DataImporter
 {
     public interface IDataImporter
     {
-        void UpdateDatabaseWithClientData(List<ClientModel> clientData);
+        void UpdateDatabase(List<ClientModel> clientData);
 
-        void UpdateDatabaseWithCenturionFile(List<CenturionModel> centurionData);
+        void UpdateDatabase(List<CenturionModel> centurionData);
     }
 }

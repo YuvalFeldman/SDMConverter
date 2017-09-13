@@ -1,7 +1,6 @@
 C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\UI\bin\Debug\UI.exe.config
 C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\UI\bin\Debug\UI.exe
 C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\UI\bin\Debug\UI.pdb
-C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\UI\obj\Debug\UI.csprojResolveAssemblyReference.cache
 C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\UI\obj\Debug\MainWindow.g.cs
 C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\UI\obj\Debug\App.g.cs
 C:\Users\Feldm\Desktop\ProjectFire\In Work\DRD\SDM\UI\obj\Debug\UI_MarkupCompile.cache
