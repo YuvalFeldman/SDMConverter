@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace SDM.Models
+namespace SDM.Models.ReportModels
 {
-    public class ClientModel
+    public class S
+    {
+        public List<ClientModelRow> ClientReport { get; set; } = new List<ClientModelRow>();
+    }
+    public class ClientModelRow
     {
         public string InvoiceNumber { get; set; }
 

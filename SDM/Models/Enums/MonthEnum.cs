@@ -1,4 +1,4 @@
-﻿namespace SDM.Models
+﻿namespace SDM.Models.Enums
 {
     public enum MonthEnum
     {

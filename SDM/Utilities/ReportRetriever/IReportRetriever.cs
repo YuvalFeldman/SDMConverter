@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SDM.Models;
+using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.ReportRetriever
 {

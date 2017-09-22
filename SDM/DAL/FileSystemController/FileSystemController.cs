@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows.Forms;
 using SDM.DAL.FileWizard;
 using SDM.Models;
+using SDM.Models.Enums;
+using SDM.Models.ReportModels;
 using SDM.Utilities.DataConverter;
 using SDM.Utilities.DataImporter;
 
@@ -28,7 +30,7 @@ namespace SDM.DAL.FileSystemController
             _saveFileDialog = new SaveFileDialog { Filter = @"CSV files (*.csv)|*.csv" };
         }
 
-        public List<ClientModel> ReadClientLog()
+        public List<ClientModelRow> ReadClientLog()
         {
             if (_openFileDialog.ShowDialog() != DialogResult.OK)
             {
@@ -42,7 +44,7 @@ namespace SDM.DAL.FileSystemController
             return parsedFileContent;
         }
 
-        public List<CenturionModel> ReadCenturionLog()
+        public List<CenturionModelRow> ReadCenturionLog()
         {
             if (_openFileDialog.ShowDialog() != DialogResult.OK)
             {
@@ -56,7 +58,7 @@ namespace SDM.DAL.FileSystemController
             return parsedFileContent;
         }
 
-        public void LogData(List<ClientModel> data)
+        public void LogData(List<ClientModelRow> data)
         {
             var logFolder = $".\\ImportLogs\\{ImportTypes.ClientData}";
 
@@ -73,7 +75,7 @@ namespace SDM.DAL.FileSystemController
             _fileWizard.WriteToFile(fullFilePath, csvData);
         }
 
-        public void LogData(List<CenturionModel> data)
+        public void LogData(List<CenturionModelRow> data)
         {
             var logFolder = $".\\ImportLogs\\{ImportTypes.CenturionDebtCollection}";
 
@@ -90,7 +92,7 @@ namespace SDM.DAL.FileSystemController
             _fileWizard.WriteToFile(fullFilePath, csvData);
         }
 
-        public void WriteToFile(List<ClientModel> data)
+        public void WriteToFile(List<ClientModelRow> data)
         {
             if (_saveFileDialog.ShowDialog() != DialogResult.OK)
             {
@@ -102,7 +104,7 @@ namespace SDM.DAL.FileSystemController
             _fileWizard.WriteToFile(filePath, csvFileContent);
         }
 
-        public void WriteToFile(List<CenturionModel> data)
+        public void WriteToFile(List<CenturionModelRow> data)
         {
             if (_saveFileDialog.ShowDialog() != DialogResult.OK)
             {

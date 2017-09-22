@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SDM.Models;
+using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.DataConverter
 {
@@ -59,21 +60,21 @@ namespace SDM.Utilities.DataConverter
             return csvData;
         }
 
-        public List<string> ConvertClientDataModelToCsv(List<ClientModel> data)
+        public List<string> ConvertClientDataModelToCsv(List<ClientModelRow> data)
         {
             var csv = new List<string> { $"{InvoiceNumber},{InvoiceDate},{PaymentTerms},{AmountDue}" };
             csv.AddRange(data.Select(clientModel => $"{clientModel.InvoiceNumber},{clientModel.InvoiceDate},{clientModel.PaymentTerms},{clientModel.AmountDue}"));
             return csv;
         }
 
-        public List<string> ConvertCenturionModelToCsv(List<CenturionModel> data)
+        public List<string> ConvertCenturionModelToCsv(List<CenturionModelRow> data)
         {
             var csv = new List<string> { $"{ClientId},{InvoiceNumber},{PaymentDate},{AmountPaid}" };
             csv.AddRange(data.Select(centurionModel => $"{centurionModel.ClientId},{centurionModel.InvoiceNumber},{centurionModel.PaymentDate},{centurionModel.AmountPaid}"));
             return csv;
         }
 
-        public List<ClientModel> ConvertCsvToClientDataModel(List<string> data)
+        public List<ClientModelRow> ConvertCsvToClientDataModel(List<string> data)
         {
             var header = data[0].Split(',').ToList();
             var invoiceNumberPlacement = header.FindIndex(headerItem => string.Equals(headerItem, InvoiceNumber, StringComparison.OrdinalIgnoreCase));
@@ -84,7 +85,7 @@ namespace SDM.Utilities.DataConverter
             data.RemoveAt(0);
             var clientModelList = data
                 .Select(line => line.Split(','))
-                .Select(lineParams => new ClientModel
+                .Select(lineParams => new ClientModelRow
                 {
                     InvoiceNumber = lineParams[invoiceNumberPlacement],
                     InvoiceDate = DateTime.Parse(lineParams[invoiceDatePlacement]),
@@ -96,7 +97,7 @@ namespace SDM.Utilities.DataConverter
             return clientModelList;
         }
 
-        public List<CenturionModel> ConvertCsvToCenturionModel(List<string> data)
+        public List<CenturionModelRow> ConvertCsvToCenturionModel(List<string> data)
         {
             var header = data[0].Split(',').ToList();
             var clientIdPlacement = header.FindIndex(headerItem => string.Equals(headerItem, ClientId, StringComparison.OrdinalIgnoreCase));
@@ -107,7 +108,7 @@ namespace SDM.Utilities.DataConverter
             data.RemoveAt(0);
             var clientModelList = data
                 .Select(line => line.Split(','))
-                .Select(lineParams => new CenturionModel { InvoiceNumber = lineParams[invoiceNumberPlacement], PaymentDate = DateTime.Parse(lineParams[paymentDatePlacement]), ClientId = lineParams[clientIdPlacement], AmountPaid = int.Parse(lineParams[amountPaidPlacement])})
+                .Select(lineParams => new CenturionModelRow { InvoiceNumber = lineParams[invoiceNumberPlacement], PaymentDate = DateTime.Parse(lineParams[paymentDatePlacement]), ClientId = lineParams[clientIdPlacement], AmountPaid = int.Parse(lineParams[amountPaidPlacement])})
                 .ToList();
 
             return clientModelList;

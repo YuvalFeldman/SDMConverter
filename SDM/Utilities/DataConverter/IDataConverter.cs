@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SDM.Models;
+using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.DataConverter
 {
@@ -9,13 +10,13 @@ namespace SDM.Utilities.DataConverter
 
         List<string> ConvertSummedDatabaseToCsv(List<SummedDatabasePartner> data);
 
-        List<ClientModel> ConvertCsvToClientDataModel(List<string> data);
+        List<ClientModelRow> ConvertCsvToClientDataModel(List<string> data);
 
-        List<string> ConvertClientDataModelToCsv(List<ClientModel> data);
+        List<string> ConvertClientDataModelToCsv(List<ClientModelRow> data);
 
-        List<CenturionModel> ConvertCsvToCenturionModel(List<string> data);
+        List<CenturionModelRow> ConvertCsvToCenturionModel(List<string> data);
 
-        List<string> ConvertCenturionModelToCsv(List<CenturionModel> data);
+        List<string> ConvertCenturionModelToCsv(List<CenturionModelRow> data);
 
     }
 }

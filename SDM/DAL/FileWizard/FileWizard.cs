@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,17 +10,28 @@ namespace SDM.DAL.FileWizard
     {
         public List<string> ReadFile(string path)
         {
-            var file = new List<string>();
-            using (var reader = new StreamReader(path, Encoding.UTF8))
+            if (!File.Exists(path))
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    file.Add(line);
-                }
+                throw new Exception($"File does not exist, file: {path}");
             }
+            try
+            {
+                var file = new List<string>();
+                using (var reader = new StreamReader(path, Encoding.UTF8))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        file.Add(line);
+                    }
+                }
 
-            return file;
+                return file;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error reading file data, file: {path}", ex);
+            }
         }
 
         public void WriteToFile(string path, List<string> data)

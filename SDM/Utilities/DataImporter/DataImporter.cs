@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SDM.Database;
 using SDM.Models;
+using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.DataImporter
 {
@@ -15,7 +16,7 @@ namespace SDM.Utilities.DataImporter
             _database = database;
         }
 
-        public void UpdateDatabase(List<ClientModel> clientData)
+        public void UpdateDatabase(List<ClientModelRow> clientData)
         {
             var database = _database.Get();
             var newInvoiceFilteredClientData = clientData.Where(dataRow => !database.ContainsKey(dataRow.InvoiceNumber));
@@ -37,7 +38,7 @@ namespace SDM.Utilities.DataImporter
             }
         }
 
-        public void UpdateDatabase(List<CenturionModel> centurionData)
+        public void UpdateDatabase(List<CenturionModelRow> centurionData)
         {
             var database = _database.Get();
             var newInvoiceFilteredCenturionData = centurionData.Where(dataRow => !database.ContainsKey(dataRow.InvoiceNumber));

@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SDM.Models
+namespace SDM.Models.ReportModels
 {
+    public class FullDatabseModel
+    {
+        public List<FullDatabaseRow> FullDatabase { get; set; } = new List<FullDatabaseRow>();
+    }
     public class FullDatabaseRow
     {
         public string ClientId { get; set; }
