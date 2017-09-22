@@ -1,27 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using SDM.Database;
-using SDM.Models;
 using SDM.Models.ReportModels;
 
-namespace SDM.Utilities.ReportRetriever
+namespace SDM.Utilities.SummedReportRetriever
 {
-    public class ReportRetriever : IReportRetriever
+    public class SummedReportRetriever : ISummedReportRetriever
     {
-        private readonly IDatabase _database;
-
-        public ReportRetriever(IDatabase database)
-        {
-            _database = database;
-        }
-
-        public List<FullDatabaseRow> GetFullDebtReport()
-        {
-            return _database.Get().Values.ToList();
-        }
-
-        public List<SummedDatabasePartner> GetSummedDebtReport()
+        public SummedDatabaseModel GetSummedDebtReport()
         {
             var fullDb = _database.Get();
 
@@ -41,11 +26,6 @@ namespace SDM.Utilities.ReportRetriever
             var summedPartnerDb = dbSplitByPartner.ToDictionary(key => key, partnerDb => ConvertClientFullDbToSummedFullDb(partnerDb.Value));
 
             return summedPartnerDb.Values.ToList();
-        }
-
-        public List<SummedDatabasePartner> ConvertClientFullDbToSummedFullDb(List<FullDatabaseRow> clientFullDb)
-        {
-            
         }
     }
 }

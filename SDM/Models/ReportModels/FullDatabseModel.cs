@@ -13,7 +13,7 @@ namespace SDM.Models.ReportModels
         public string InvoiceNumber { get; set; }
         public int PaymentDue { get; set; }
         public DateTime PaymentDueDate { get; set; }
-        public List<PaymentDateLatencyPaid> Payments { get; set; }
+        public List<PaymentDateLatencyPaid> Payments { get; set; } = new List<PaymentDateLatencyPaid>();
     }
 
     public class PaymentDateLatencyPaid

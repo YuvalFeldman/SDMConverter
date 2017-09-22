@@ -2,47 +2,57 @@
 using SDM.DAL.FileSystemController;
 using SDM.Models;
 using SDM.Utilities.DataImporter;
-using SDM.Utilities.ReportRetriever;
+using SDM.Utilities.SummedReportRetriever;
 
 namespace SDM.SDM
 {
     public class SDM : ISDM
     {
         private readonly IFileSystemController _fileSystemController;
-        private readonly IReportRetriever _reportRetriever;
+        private readonly ISummedReportRetriever _summedReportRetriever;
         private readonly IDataImporter _dataImporter;
 
-        public SDM(IFileSystemController fileSystemController, IReportRetriever reportRetriever, IDataImporter dataImporter)
+        public SDM(IFileSystemController fileSystemController, ISummedReportRetriever summedReportRetriever, IDataImporter dataImporter)
         {
             _fileSystemController = fileSystemController;
-            _reportRetriever = reportRetriever;
+            _summedReportRetriever = summedReportRetriever;
             _dataImporter = dataImporter;
         }
 
-        public void ImportClientData()
+        public void ImportClientReport()
         {
             var data = _fileSystemController.ReadClientLog();
             _fileSystemController.LogData(data);
             _dataImporter.UpdateDatabase(data);
         }
 
-        public void ImportcenturionDebtCollection()
+        public void ImportcenturionReport()
         {
             var data = _fileSystemController.ReadCenturionLog();
             _fileSystemController.LogData(data);
             _dataImporter.UpdateDatabase(data);
         }
 
-        public void GetFullDebtReport()
+        public void ExportFullDebtReport()
         {
-            var report = _reportRetriever.GetFullDebtReport();
+            var report = _summedReportRetriever.GetFullDebtReport();
             _fileSystemController.WriteToFile(report);
         }
 
-        public void GetSummedDebtReport()
+        public void ExportSummedDebtReport()
         {
-            var report = _reportRetriever.GetSummedDebtReport();
+            var report = _summedReportRetriever.GetSummedDebtReport();
             _fileSystemController.WriteToFile(report);
+        }
+
+        public void DeleteClientReport()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DeleteCenturionReport()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

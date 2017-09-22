@@ -6,20 +6,18 @@ namespace SDM.DAL.FileSystemController
 {
     public interface IFileSystemController
     {
-        List<ClientModelRow> ReadClientLog();
+        ClientReportModel ReadClientLog();
 
-        List<CenturionModelRow> ReadCenturionLog();
+        CenturionReportModel ReadCenturionLog();
 
-        void LogData(List<ClientModelRow> data);
+        void LogData(ClientReportModel data);
 
-        void LogData(List<CenturionModelRow> data);
+        void LogData(CenturionReportModel data);
 
-        void WriteToFile(List<ClientModelRow> data);
+        void WriteToFile(FullDatabseModel data);
 
-        void WriteToFile(List<CenturionModelRow> data);
+        void WriteToFile(SummedDatabaseModel data);
 
-        void WriteToFile(List<FullDatabaseRow> data);
-
-        void WriteToFile(List<SummedDatabasePartner> data);
+        void WriteToFile(SummedDatabasePartner data);
     }
 }

@@ -2,12 +2,16 @@
 {
     public interface ISDM
     {
-        void ImportClientData();
+        void ImportClientReport();
 
-        void ImportcenturionDebtCollection();
+        void ImportcenturionReport();
 
-        void GetFullDebtReport();
+        void ExportFullDebtReport();
 
-        void GetSummedDebtReport();
+        void ExportSummedDebtReport();
+
+        void DeleteClientReport();
+
+        void DeleteCenturionReport();
     }
 }

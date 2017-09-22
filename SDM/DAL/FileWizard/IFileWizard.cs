@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SDM.Models.Enums;
 
 namespace SDM.DAL.FileWizard
 {
@@ -9,6 +10,8 @@ namespace SDM.DAL.FileWizard
         List<string> GetFileNamesInDirectory(string path);
 
         void WriteToFile(string path, List<string> data);
+
+        void CopyFileToReportLogFolder(string filePath, string newFilePath);
 
         void CreateFile(string path);
 

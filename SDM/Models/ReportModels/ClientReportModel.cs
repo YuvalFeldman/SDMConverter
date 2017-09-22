@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SDM.Models.ReportModels
 {
-    public class S
+    public class ClientReportModel
     {
         public List<ClientModelRow> ClientReport { get; set; } = new List<ClientModelRow>();
     }

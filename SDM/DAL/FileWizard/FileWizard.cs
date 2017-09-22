@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using SDM.Models.Enums;
 
 namespace SDM.DAL.FileWizard
 {
@@ -77,6 +78,11 @@ namespace SDM.DAL.FileWizard
         public List<string> GetFileNamesInDirectory(string path)
         {
             return Directory.GetFiles(path, "*.csv").Select(Path.GetFileName).ToList();
+        }
+
+        public void CopyFileToReportLogFolder(string filePath, string newFilePath)
+        {
+            File.Copy(filePath, newFilePath);
         }
     }
 }

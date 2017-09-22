@@ -6,17 +6,12 @@ namespace SDM.Utilities.DataConverter
 {
     public interface IDataConverter
     {
-        List<string> ConvertFullDatabaseToCsv(List<FullDatabaseRow> data);
+        List<string> ConvertFullDatabaseToCsv(FullDatabseModel data);
 
-        List<string> ConvertSummedDatabaseToCsv(List<SummedDatabasePartner> data);
+        Dictionary<string, List<string>> ConvertSummedDatabaseToCsv(SummedDatabaseModel data);
 
-        List<ClientModelRow> ConvertCsvToClientDataModel(List<string> data);
+        ClientReportModel  ConvertCsvToClientDataModel(List<string> data);
 
-        List<string> ConvertClientDataModelToCsv(List<ClientModelRow> data);
-
-        List<CenturionModelRow> ConvertCsvToCenturionModel(List<string> data);
-
-        List<string> ConvertCenturionModelToCsv(List<CenturionModelRow> data);
-
+        CenturionReportModel ConvertCsvToCenturionModel(List<string> data);
     }
 }

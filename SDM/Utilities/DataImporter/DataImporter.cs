@@ -1,21 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SDM.Database;
-using SDM.Models;
 using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.DataImporter
 {
     public class DataImporter : IDataImporter
     {
-        private readonly IDatabase _database;
-
-        public DataImporter(IDatabase database)
-        {
-            _database = database;
-        }
-
         public void UpdateDatabase(List<ClientModelRow> clientData)
         {
             var database = _database.Get();
