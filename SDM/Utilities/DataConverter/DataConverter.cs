@@ -59,7 +59,8 @@ namespace SDM.Utilities.DataConverter
                     var currentDateData = summedDatabasePartner.Value.SummedDbPerDate[partnerDate];
 
                     csvData.Add($"{partnerDate.Month}-{partnerDate.Year}");
-                    csvData.Add($"{currentDateData.InvoiceNumber},{currentDateData.PaymentDue},{currentDateData.PaymentPaid},{currentDateData.PaidBelow30},{currentDateData.PaidOver30Below60},{currentDateData.PaidOver60Below90},{currentDateData.PaidOver90}");
+                    csvData.AddRange(currentDateData.Select(summedDatabaseRow => $"{summedDatabaseRow.InvoiceNumber},{summedDatabaseRow.PaymentDue},{summedDatabaseRow.PaymentPaid},{summedDatabaseRow.PaidBelow30},{summedDatabaseRow.PaidOver30Below60},{summedDatabaseRow.PaidOver60Below90},{summedDatabaseRow.PaidOver90}"));
+                    csvData.Add($"total due: {currentDateData.Sum(payments => payments.PaymentDue)}, total paid: {currentDateData.Sum(payments => payments.PaymentPaid)}");
                 }
 
                 csvsByPartner.Add(summedDatabasePartner.Key, csvData);

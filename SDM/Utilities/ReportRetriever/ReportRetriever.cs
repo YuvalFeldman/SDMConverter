@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SDM.Models.ReportModels;
 using SDM.Utilities.DataImporter;
@@ -14,24 +15,59 @@ namespace SDM.Utilities.ReportRetriever
             _dataImporter = dataImporter;
         }
 
-        public SummedDatabaseModel  GetSummedDebtReport(FullDatabaseModel fullDatabaseModel)
+        public SummedDatabaseModel GetSummedDebtReport(FullDatabaseModel fullDatabaseModel)
         {
-            var dbSplitByPartner = new Dictionary<string, List<FullDatabaseRow>>();
-            foreach (var fullDatabaseRow in fullDb)
+            var dataBaseRowsByClientId = new Dictionary<string, List<FullDatabaseRow>>();
+            foreach (var fullDatabaseRow in fullDatabaseModel.FullDatabase)
             {
-                if (dbSplitByPartner.ContainsKey(fullDatabaseRow.Value.ClientId))
+                if (dataBaseRowsByClientId.ContainsKey(fullDatabaseRow.ClientId))
                 {
-                    dbSplitByPartner.Add(fullDatabaseRow.Value.ClientId, new List<FullDatabaseRow>{fullDatabaseRow.Value});
+                    dataBaseRowsByClientId[fullDatabaseRow.ClientId].Add(fullDatabaseRow);
                 }
                 else
                 {
-                    dbSplitByPartner[fullDatabaseRow.Value.ClientId].Add(fullDatabaseRow.Value);
+                    dataBaseRowsByClientId.Add(fullDatabaseRow.ClientId, new List<FullDatabaseRow> { fullDatabaseRow });
                 }
             }
 
-            var summedPartnerDb = dbSplitByPartner.ToDictionary(key => key, partnerDb => ConvertClientFullDbToSummedFullDb(partnerDb.Value));
+            var summedDatabase = new SummedDatabaseModel();
+            foreach (var clientDbRows in dataBaseRowsByClientId)
+            {
+                var clientDbRowsSplitByPaymentDueDate = new Dictionary<DateTime, List<FullDatabaseRow>>();
+                foreach (var clientDbRow in clientDbRows.Value)
+                {
+                    if (clientDbRowsSplitByPaymentDueDate.ContainsKey(clientDbRow.PaymentDueDate))
+                    {
+                        clientDbRowsSplitByPaymentDueDate[clientDbRow.PaymentDueDate].Add(clientDbRow);
+                    }
+                    else
+                    {
+                        clientDbRowsSplitByPaymentDueDate.Add(clientDbRow.PaymentDueDate, new List<FullDatabaseRow>{clientDbRow});
+                    }
+                }
 
-            return summedPartnerDb.Values.ToList();
+                var clientSummedDatabase = new SummedDatabasePartner
+                {
+                    ClientName = clientDbRows.Key,
+                    SummedDbPerDate = clientDbRowsSplitByPaymentDueDate
+                        .ToDictionary(key => key.Key, value => value.Value.Select(databaseRow => new SummedDatabaseRow
+                        {
+                            Month = value.Key,
+                            InvoiceNumber = databaseRow.InvoiceNumber,
+                            PaymentDue = databaseRow.PaymentDue,
+                            PaymentPaid = databaseRow.Payments.Sum(payment => payment.PaymentPaid),
+                            PaidBelow30 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays < 30).Sum(payment => payment.PaymentPaid),
+                            PaidOver30Below60 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays > 30 && (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays < 60).Sum(payment => payment.PaymentPaid),
+                            PaidOver60Below90 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays > 60 && (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays < 90).Sum(payment => payment.PaymentPaid),
+                            PaidOver90 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays > 90).Sum(payment => payment.PaymentPaid)
+
+                        }).ToList())
+                };
+
+                summedDatabase.SummedDatabase.Add(clientDbRows.Key, clientSummedDatabase);
+            }
+
+            return summedDatabase;
         }
 
         public FullDatabaseModel GetFullDebtReport(List<ClientReportModel> clientReportModels, List<CenturionReportModel> centurionReportModels)

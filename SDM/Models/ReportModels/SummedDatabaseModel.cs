@@ -11,14 +11,14 @@ namespace SDM.Models.ReportModels
     public class SummedDatabasePartner
     {
         public string ClientName { get; set; }
-        public Dictionary<DateTime, SummedDatabaseRow> SummedDbPerDate { get; set; }
+        public Dictionary<DateTime, List<SummedDatabaseRow>> SummedDbPerDate { get; set; }
     }
     public class SummedDatabaseRow
     {
-        public MonthEnum Month { get; set; }
+        public DateTime Month { get; set; }
         public string InvoiceNumber { get; set; }
-        public DateTime PaymentDue { get; set; }
-        public string PaymentPaid { get; set; }
+        public int PaymentDue { get; set; }
+        public int PaymentPaid { get; set; }
         public int PaidBelow30 { get; set; }
         public int PaidOver30Below60 { get; set; }
         public int PaidOver60Below90 { get; set; }
