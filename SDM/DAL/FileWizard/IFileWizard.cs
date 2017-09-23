@@ -6,7 +6,7 @@ namespace SDM.DAL.FileWizard
     {
         string GetSaveDialogFilePath();
 
-        string GetOpenDialogFilePath(string limitToDirectory);
+        string GetOpenDialogFilePath(string limitToDirectory = null);
 
         string GetDirectoryPath();
 

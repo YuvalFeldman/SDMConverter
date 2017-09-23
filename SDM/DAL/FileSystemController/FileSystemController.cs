@@ -24,7 +24,7 @@ namespace SDM.DAL.FileSystemController
         public List<ClientReportModel> ReadClientLogs(LatencyConversionModel latencyConversionModel)
         {
             return _fileWizard.GetFileNamesInDirectory($".\\ImportLogs\\{ReportTypes.ClientReport}")
-                .Select(filePath => _fileWizard.ReadFileContents(filePath))
+                .Select(filePath => _fileWizard.ReadFileContents($".\\ImportLogs\\{ReportTypes.ClientReport}\\{filePath}"))
                 .Select(fileContent => _dataConverter.ConvertCsvToClientDataModel(fileContent, latencyConversionModel))
                 .ToList();
         }
@@ -32,7 +32,7 @@ namespace SDM.DAL.FileSystemController
         public List<CenturionReportModel> ReadCenturionLogs()
         {
             return _fileWizard.GetFileNamesInDirectory($".\\ImportLogs\\{ReportTypes.CenturionReport}")
-                .Select(filePath => _fileWizard.ReadFileContents(filePath))
+                .Select(filePath => _fileWizard.ReadFileContents($".\\ImportLogs\\{ReportTypes.CenturionReport}\\{filePath}"))
                 .Select(fileContent => _dataConverter.ConvertCsvToCenturionModel(fileContent))
                 .ToList();
         }
@@ -58,7 +58,7 @@ namespace SDM.DAL.FileSystemController
 
         public void LogData(ReportTypes reportType, string clientId = null)
         {
-            var path = _fileWizard.GetSaveDialogFilePath();
+            var path = _fileWizard.GetOpenDialogFilePath();
 
             var logFolder = $".\\ImportLogs\\{reportType}";
             var reportName = Path.GetFileName(path);

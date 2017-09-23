@@ -24,7 +24,7 @@ namespace SDM.SDM
 
         public void ImportcenturionReport()
         {
-            _fileSystemController.LogData(ReportTypes.ClientReport);
+            _fileSystemController.LogData(ReportTypes.CenturionReport);
         }
 
         public void ExportFullDebtReport()

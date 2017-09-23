@@ -96,6 +96,10 @@ namespace SDM.DAL.FileWizard
 
         public void CopyFileToReportLogFolder(string filePath, string newFilePath)
         {
+            if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(newFilePath))
+            {
+                return;
+            }
             File.Copy(filePath, newFilePath);
         }
 
@@ -109,9 +113,12 @@ namespace SDM.DAL.FileWizard
             return _saveFileDialog.FileName;
         }
 
-        public string GetOpenDialogFilePath(string limitToDirectory)
+        public string GetOpenDialogFilePath(string limitToDirectory = null)
         {
-            _openFileDialogLimitDirectory.InitialDirectory = limitToDirectory;
+            _openFileDialogLimitDirectory.InitialDirectory = 
+                string.IsNullOrEmpty(limitToDirectory) ? 
+                limitToDirectory : 
+                string.Empty;
 
             if (_openFileDialogLimitDirectory.ShowDialog() != DialogResult.OK)
             {

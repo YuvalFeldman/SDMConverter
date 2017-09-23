@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using SDM.Models.LatencyConversionModel;
 using SDM.Models.ReportModels;
@@ -82,7 +83,7 @@ namespace SDM.Utilities.DataConverter
                                     latencyConversionModel.LatencyConversionTable[lineParams[20]].ContainsKey(int.Parse(lineParams[15])) ?
                                     latencyConversionModel.LatencyConversionTable[lineParams[20]][int.Parse(lineParams[15])] :
                                     int.Parse(lineParams[15]),
-                    InvoiceDate = DateTime.Parse(lineParams[19]),
+                    InvoiceDate = TryParsingDateTime(lineParams[19]),
                     AmountDue = int.Parse(lineParams[16]),
                     PaymentTerms = int.Parse(lineParams[14]),
                     ClientId = lineParams[20]
@@ -90,6 +91,39 @@ namespace SDM.Utilities.DataConverter
                 .ToList();
 
             return clientReport;
+        }
+
+        private DateTime TryParsingDateTime(string date)
+        {
+            try
+            {
+                return DateTime.ParseExact(date, "d.MM.yyyy", CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    return DateTime.ParseExact(date, "d.M.yyyy", CultureInfo.InvariantCulture);
+                }
+                catch (Exception)
+                {
+                    try
+                    {
+                        return DateTime.ParseExact(date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                    }
+                    catch (Exception)
+                    {
+                        try
+                        {
+                            return DateTime.ParseExact(date, "dd.M.yyyy", CultureInfo.InvariantCulture);
+                        }
+                        catch (Exception)
+                        {
+                            throw new Exception($"invalid dateTime format: {date}");
+                        }
+                    }
+                }
+            }
         }
 
         public CenturionReportModel ConvertCsvToCenturionModel(List<string> data)
@@ -101,7 +135,7 @@ namespace SDM.Utilities.DataConverter
                 .Select(lineParams => new CenturionModelRow
                 {
                     InvoiceNumber = lineParams[3],
-                    PaymentDate = DateTime.Parse(lineParams[5]),
+                    PaymentDate = TryParsingDateTime(lineParams[5]),
                     ClientId = lineParams[0],
                     AmountPaid = int.Parse(lineParams[7])
                 })
