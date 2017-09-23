@@ -3,13 +3,27 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using SDM.Models.Enums;
+using System.Windows.Forms;
 
 namespace SDM.DAL.FileWizard
 {
     public class FileWizard : IFileWizard
     {
-        public List<string> ReadFile(string path)
+        private readonly OpenFileDialog _openFileDialogLimitDirectory;
+        private readonly SaveFileDialog _saveFileDialog;
+        private readonly FolderBrowserDialog _folderBrowserDialog;
+
+        public FileWizard(SaveFileDialog saveFileDialog, FolderBrowserDialog folderBrowserDialog, OpenFileDialog openFileDialogLimitDirectory, OpenFileDialog openFileDialogCenturionFile)
+        {
+            _saveFileDialog = saveFileDialog;
+            _folderBrowserDialog = folderBrowserDialog;
+            _openFileDialogLimitDirectory = openFileDialogLimitDirectory;
+
+            _openFileDialogLimitDirectory = new OpenFileDialog { Filter = @"CSV files (*.csv)|*.csv" };
+            _saveFileDialog = new SaveFileDialog { Filter = @"CSV files (*.csv)|*.csv" };
+        }
+
+        public List<string> ReadFileContents(string path)
         {
             if (!File.Exists(path))
             {
@@ -35,7 +49,7 @@ namespace SDM.DAL.FileWizard
             }
         }
 
-        public void WriteToFile(string path, List<string> data)
+        public void WriteDataToFile(string path, List<string> data)
         {
             CreateFile(path);
             File.WriteAllLines(path, data);
@@ -83,6 +97,38 @@ namespace SDM.DAL.FileWizard
         public void CopyFileToReportLogFolder(string filePath, string newFilePath)
         {
             File.Copy(filePath, newFilePath);
+        }
+
+        public string GetSaveDialogFilePath()
+        {
+            if (_saveFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return null;
+            }
+
+            return _saveFileDialog.FileName;
+        }
+
+        public string GetOpenDialogFilePath(string limitToDirectory)
+        {
+            _openFileDialogLimitDirectory.InitialDirectory = limitToDirectory;
+
+            if (_openFileDialogLimitDirectory.ShowDialog() != DialogResult.OK)
+            {
+                return null;
+            }
+
+            return _openFileDialogLimitDirectory.FileName;
+        }
+
+        public string GetDirectoryPath()
+        {
+            if (_folderBrowserDialog.ShowDialog() != DialogResult.OK)
+            {
+                return null;
+            }
+
+            return _folderBrowserDialog.SelectedPath;
         }
     }
 }

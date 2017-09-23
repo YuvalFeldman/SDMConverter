@@ -7,47 +7,54 @@ namespace SDM.Utilities.DataImporter
 {
     public class DataImporter : IDataImporter
     {
-        public void UpdateDatabase(List<ClientModelRow> clientData)
+        public void UpdateDatabase(FullDatabaseModel fullDatabase, List<ClientReportModel> data)
         {
-            var database = _database.Get();
-            var newInvoiceFilteredClientData = clientData.Where(dataRow => !database.ContainsKey(dataRow.InvoiceNumber));
+            var uniqueClientReportRows =
+                data
+                .Select(report => report.ClientReport)
+                .Aggregate((a,b) => a.Union(b).ToList());
 
-            foreach (var clientModel in newInvoiceFilteredClientData)
+            foreach (var clientReportRow in uniqueClientReportRows)
             {
-                var fullDbRow = new FullDatabaseRow
+                if (fullDatabase.FullDatabase.Any(fullDatabaseRow => fullDatabaseRow.InvoiceNumber.Equals(clientReportRow.InvoiceNumber)))
                 {
-                    InvoiceNumber = clientModel.InvoiceNumber,
-                    PaymentDue = clientModel.AmountDue,
+                    continue;
+                }
+
+                var newDatabaseRow = new FullDatabaseRow
+                {
+                    InvoiceNumber = clientReportRow.InvoiceNumber,
+                    PaymentDue = clientReportRow.AmountDue,
                     PaymentDueDate = new DateTime(
-                            clientModel.InvoiceDate.Year,
-                            clientModel.InvoiceDate.Month,
-                            DateTime.DaysInMonth(clientModel.InvoiceDate.Year, clientModel.InvoiceDate.Month)).
-                        AddDays(clientModel.PaymentTerms)
+                        clientReportRow.InvoiceDate.Year,
+                        clientReportRow.InvoiceDate.Month,
+                        DateTime.DaysInMonth(clientReportRow.InvoiceDate.Year, clientReportRow.InvoiceDate.Month)).
+                        AddDays(clientReportRow.PaymentTerms)
                 };
 
-                database.Add(clientModel.InvoiceNumber, fullDbRow);
+                fullDatabase.FullDatabase.Add(newDatabaseRow);
             }
         }
 
-        public void UpdateDatabase(List<CenturionModelRow> centurionData)
+        public void UpdateDatabase(FullDatabaseModel fullDatabase, List<CenturionReportModel> data)
         {
-            var database = _database.Get();
-            var newInvoiceFilteredCenturionData = centurionData.Where(dataRow => !database.ContainsKey(dataRow.InvoiceNumber));
-            //todo: export the new invoice numbers to an issue file
+            var uniqueCenturionReportRows =
+                data
+                .Select(report => report.CenturionReport)
+                .Aggregate((a, b) => a.Union(b).ToList());
 
-            var existingInvoiceFilteredCenturionData = centurionData.Where(dataRow => database.ContainsKey(dataRow.InvoiceNumber));
-
-            foreach (var centurionModel in existingInvoiceFilteredCenturionData)
+            //TODO: export errors list with rows that have new invoice numbers
+            foreach (var uniqueCenturionReportRow in uniqueCenturionReportRows)
             {
-                var fullDbRow = database[centurionModel.InvoiceNumber];
-                fullDbRow.ClientId = centurionModel.ClientId;
+                var fullDbRow = fullDatabase.FullDatabase.First(row => row.InvoiceNumber.Equals(uniqueCenturionReportRow.InvoiceNumber));
+                fullDbRow.ClientId = uniqueCenturionReportRow.ClientId;
                 var payment = new PaymentDateLatencyPaid
                 {
-                    PaymentDate = centurionModel.PaymentDate,
-                    PaymentPaid = centurionModel.AmountPaid
+                    PaymentDate = uniqueCenturionReportRow.PaymentDate,
+                    PaymentPaid = uniqueCenturionReportRow.AmountPaid
                 };
 
-                var totalDaysBetweenDueAndPaid = (centurionModel.PaymentDate - fullDbRow.PaymentDueDate).TotalDays;
+                var totalDaysBetweenDueAndPaid = (uniqueCenturionReportRow.PaymentDate - fullDbRow.PaymentDueDate).TotalDays;
                 payment.Latency = totalDaysBetweenDueAndPaid > 0 ? (int)totalDaysBetweenDueAndPaid : 0;
             }
         }

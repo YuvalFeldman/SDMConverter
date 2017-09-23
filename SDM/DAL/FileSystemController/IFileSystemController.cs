@@ -1,23 +1,21 @@
 ﻿using System.Collections.Generic;
-using SDM.Models;
+using SDM.Models.Enums;
 using SDM.Models.ReportModels;
 
 namespace SDM.DAL.FileSystemController
 {
     public interface IFileSystemController
     {
-        ClientReportModel ReadClientLog();
+        List<ClientReportModel> ReadClientLogs();
 
-        CenturionReportModel ReadCenturionLog();
+        List<CenturionReportModel> ReadCenturionLogs();
 
-        void LogData(ClientReportModel data);
+        void LogData(ReportTypes reportType);
 
-        void LogData(CenturionReportModel data);
-
-        void WriteToFile(FullDatabseModel data);
+        void WriteToFile(FullDatabaseModel data);
 
         void WriteToFile(SummedDatabaseModel data);
 
-        void WriteToFile(SummedDatabasePartner data);
+        void DeleteReport(ReportTypes reportType);
     }
 }

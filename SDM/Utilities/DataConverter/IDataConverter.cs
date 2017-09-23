@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
-using SDM.Models;
 using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.DataConverter
 {
     public interface IDataConverter
     {
-        List<string> ConvertFullDatabaseToCsv(FullDatabseModel data);
+        List<string> ConvertToCsv(FullDatabaseModel data);
 
-        Dictionary<string, List<string>> ConvertSummedDatabaseToCsv(SummedDatabaseModel data);
+        Dictionary<string, List<string>> ConvertToCsv(SummedDatabaseModel data);
 
         ClientReportModel  ConvertCsvToClientDataModel(List<string> data);
 

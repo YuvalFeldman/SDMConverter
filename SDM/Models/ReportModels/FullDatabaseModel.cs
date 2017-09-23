@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SDM.Models.ReportModels
 {
-    public class FullDatabseModel
+    public class FullDatabaseModel
     {
         public List<FullDatabaseRow> FullDatabase { get; set; } = new List<FullDatabaseRow>();
     }

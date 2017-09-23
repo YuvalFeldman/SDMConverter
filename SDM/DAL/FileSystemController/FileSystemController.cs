@@ -1,176 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using SDM.DAL.FileWizard;
-using SDM.Models;
 using SDM.Models.Enums;
 using SDM.Models.ReportModels;
 using SDM.Utilities.DataConverter;
-using SDM.Utilities.DataImporter;
 
 namespace SDM.DAL.FileSystemController
 {
     public class FileSystemController : IFileSystemController
     {
         private readonly IFileWizard _fileWizard;
-        private readonly OpenFileDialog _openFileDialog;
-        private readonly SaveFileDialog _saveFileDialog;
         private readonly IDataConverter _dataConverter;
-        private readonly IDataImporter _dataImporter;
 
-        public FileSystemController(IFileWizard fileWizard, IDataConverter dataConverter, IDataImporter dataImporter)
+        public FileSystemController(IFileWizard fileWizard, IDataConverter dataConverter)
         {
             _fileWizard = fileWizard;
             _dataConverter = dataConverter;
-            _dataImporter = dataImporter;
-            _openFileDialog = new OpenFileDialog{ Filter = @"CSV files (*.csv)|*.csv" };
-            _saveFileDialog = new SaveFileDialog { Filter = @"CSV files (*.csv)|*.csv" };
         }
 
-        public ClientReportModel ReadClientLog()
+        public List<ClientReportModel> ReadClientLogs()
         {
-            throw new NotImplementedException();
+            return _fileWizard.GetFileNamesInDirectory($".\\ImportLogs\\{ReportTypes.ClientReport}")
+                .Select(filePath => _fileWizard.ReadFileContents(filePath))
+                .Select(fileContent => _dataConverter.ConvertCsvToClientDataModel(fileContent))
+                .ToList();
         }
 
-        public CenturionReportModel ReadCenturionLog()
+        public List<CenturionReportModel> ReadCenturionLogs()
         {
-            throw new NotImplementedException();
+            return _fileWizard.GetFileNamesInDirectory($".\\ImportLogs\\{ReportTypes.CenturionReport}")
+                .Select(filePath => _fileWizard.ReadFileContents(filePath))
+                .Select(fileContent => _dataConverter.ConvertCsvToCenturionModel(fileContent))
+                .ToList();
         }
 
-        public void LogData(ClientReportModel data)
+        public void WriteToFile(FullDatabaseModel data)
         {
-            throw new NotImplementedException();
-        }
+            var path = _fileWizard.GetSaveDialogFilePath();
 
-        public void LogData(CenturionReportModel data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void WriteToFile(FullDatabseModel data)
-        {
-            throw new NotImplementedException();
+            var fullDatabaseCsv = _dataConverter.ConvertToCsv(data);
+            _fileWizard.WriteDataToFile(path, fullDatabaseCsv);
         }
 
         public void WriteToFile(SummedDatabaseModel data)
         {
-            throw new NotImplementedException();
+            var path = _fileWizard.GetDirectoryPath();
+
+            var summedDatabaseCsv = _dataConverter.ConvertToCsv(data);
+            foreach (var partnerCsv in summedDatabaseCsv)
+            {
+                _fileWizard.WriteDataToFile($"{path}\\{partnerCsv.Key}", partnerCsv.Value);
+            }
         }
 
-        public void WriteToFile(SummedDatabasePartner data)
+        public void LogData(ReportTypes reportType)
         {
-            throw new NotImplementedException();
+            var path = _fileWizard.GetSaveDialogFilePath();
+
+            var logFolder = $".\\ImportLogs\\{reportType}";
+            var reportName = Path.GetFileName(path);
+            var newFilePath = $"{logFolder}\\{reportName}";
+
+            if (File.Exists(newFilePath))
+            {
+                throw new Exception($"Report with the name {Path.GetFileNameWithoutExtension(path)} already exists");
+            }
+
+            _fileWizard.CreateDirectory(logFolder);
+            _fileWizard.CopyFileToReportLogFolder(path, newFilePath);
         }
 
-        //public List<ClientModelRow> ReadClientLog()
-        //{
-        //    if (_openFileDialog.ShowDialog() != DialogResult.OK)
-        //    {
-        //        return null;
-        //    }
-
-        //    var filePath = _openFileDialog.FileName;
-        //    var fileContent = _fileWizard.ReadFile(filePath);
-        //    var parsedFileContent = _dataConverter.ConvertCsvToClientDataModel(fileContent);
-
-        //    return parsedFileContent;
-        //}
-
-        //public List<CenturionModelRow> ReadCenturionLog()
-        //{
-        //    if (_openFileDialog.ShowDialog() != DialogResult.OK)
-        //    {
-        //        return null;
-        //    }
-
-        //    var filePath = _openFileDialog.FileName;
-        //    var fileContent = _fileWizard.ReadFile(filePath);
-        //    var parsedFileContent = _dataConverter.ConvertCsvToCenturionModel(fileContent);
-
-        //    return parsedFileContent;
-        //}
-
-        //public void LogData(List<ClientModelRow> data)
-        //{
-        //    var logFolder = $".\\ImportLogs\\{ReportTypes.ClientReport}";
-
-        //    var existingLogs = _fileWizard.GetFileNamesInDirectory(logFolder);
-        //    var fileCounter = existingLogs.Count > 0
-        //        ? existingLogs.Select(name => int.Parse(name.Split('_')[0])).Max()
-        //        : 0;
-
-        //    var logName = $"{fileCounter}_{ReportTypes.ClientReport}_{(int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds}";
-        //    var fullFilePath = $"{logFolder}\\{logName}.csv";
-
-        //    var csvData = _dataConverter.ConvertClientDataModelToCsv(data);
-
-        //    _fileWizard.WriteToFile(fullFilePath, csvData);
-        //}
-
-        //public void LogData(List<CenturionModelRow> data)
-        //{
-        //    var logFolder = $".\\ImportLogs\\{ReportTypes.CenturionReport}";
-
-        //    var existingLogs = _fileWizard.GetFileNamesInDirectory(logFolder);
-        //    var fileCounter = existingLogs.Count > 0
-        //        ? existingLogs.Select(name => int.Parse(name.Split('_')[0])).Max()
-        //        : 0;
-
-        //    var logName = $"{fileCounter}_{ReportTypes.CenturionReport}_{(int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds}";
-        //    var fullFilePath = $"{logFolder}\\{logName}.csv";
-
-        //    var csvData = _dataConverter.ConvertCenturionModelToCsv(data);
-
-        //    _fileWizard.WriteToFile(fullFilePath, csvData);
-        //}
-
-        //public void WriteToFile(List<ClientModelRow> data)
-        //{
-        //    if (_saveFileDialog.ShowDialog() != DialogResult.OK)
-        //    {
-        //        return;
-        //    }
-
-        //    var filePath = _openFileDialog.FileName;
-        //    var csvFileContent = _dataConverter.ConvertClientDataModelToCsv(data);
-        //    _fileWizard.WriteToFile(filePath, csvFileContent);
-        //}
-
-        //public void WriteToFile(List<CenturionModelRow> data)
-        //{
-        //    if (_saveFileDialog.ShowDialog() != DialogResult.OK)
-        //    {
-        //        return;
-        //    }
-
-        //    var filePath = _openFileDialog.FileName;
-        //    var csvFileContent = _dataConverter.ConvertCenturionModelToCsv(data);
-        //    _fileWizard.WriteToFile(filePath, csvFileContent);
-        //}
-
-        //public void WriteToFile(List<FullDatabaseRow> data)
-        //{
-        //    if (_saveFileDialog.ShowDialog() != DialogResult.OK)
-        //    {
-        //        return;
-        //    }
-
-        //    var filePath = _openFileDialog.FileName;
-        //    var csvFileContent = _dataConverter.ConvertFullDatabaseToCsv(data);
-        //    _fileWizard.WriteToFile(filePath, csvFileContent);
-        //}
-
-        //public void WriteToFile(List<SummedDatabasePartner> data)
-        //{
-        //    if (_saveFileDialog.ShowDialog() != DialogResult.OK)
-        //    {
-        //        return;
-        //    }
-
-        //    var filePath = _openFileDialog.FileName;
-        //    var csvFileContent = _dataConverter.ConvertSummedDatabaseToCsv(data);
-        //    _fileWizard.WriteToFile(filePath, csvFileContent);
-        //}
+        public void DeleteReport(ReportTypes reportType)
+        {
+            var filePath = _fileWizard.GetOpenDialogFilePath($".\\ImportLogs\\{reportType}");
+            _fileWizard.DeleteFile(filePath);
+        }
     }
 }

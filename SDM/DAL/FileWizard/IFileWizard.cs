@@ -1,15 +1,20 @@
 ﻿using System.Collections.Generic;
-using SDM.Models.Enums;
 
 namespace SDM.DAL.FileWizard
 {
     public interface IFileWizard
     {
-        List<string> ReadFile(string path);
+        string GetSaveDialogFilePath();
+
+        string GetOpenDialogFilePath(string limitToDirectory);
+
+        string GetDirectoryPath();
+
+        List<string> ReadFileContents(string path);
 
         List<string> GetFileNamesInDirectory(string path);
 
-        void WriteToFile(string path, List<string> data);
+        void WriteDataToFile(string path, List<string> data);
 
         void CopyFileToReportLogFolder(string filePath, string newFilePath);
 

@@ -1,58 +1,57 @@
-﻿using System.Collections.Generic;
-using SDM.DAL.FileSystemController;
-using SDM.Models;
-using SDM.Utilities.DataImporter;
-using SDM.Utilities.SummedReportRetriever;
+﻿using SDM.DAL.FileSystemController;
+using SDM.Models.Enums;
+using SDM.Utilities.ReportRetriever;
 
 namespace SDM.SDM
 {
     public class SDM : ISDM
     {
         private readonly IFileSystemController _fileSystemController;
-        private readonly ISummedReportRetriever _summedReportRetriever;
-        private readonly IDataImporter _dataImporter;
+        private readonly IReportRetriever _reportRetriever;
 
-        public SDM(IFileSystemController fileSystemController, ISummedReportRetriever summedReportRetriever, IDataImporter dataImporter)
+        public SDM(IFileSystemController fileSystemController, IReportRetriever reportRetriever)
         {
             _fileSystemController = fileSystemController;
-            _summedReportRetriever = summedReportRetriever;
-            _dataImporter = dataImporter;
+            _reportRetriever = reportRetriever;
         }
 
         public void ImportClientReport()
         {
-            var data = _fileSystemController.ReadClientLog();
-            _fileSystemController.LogData(data);
-            _dataImporter.UpdateDatabase(data);
+            _fileSystemController.LogData(ReportTypes.ClientReport);
         }
 
         public void ImportcenturionReport()
         {
-            var data = _fileSystemController.ReadCenturionLog();
-            _fileSystemController.LogData(data);
-            _dataImporter.UpdateDatabase(data);
+            _fileSystemController.LogData(ReportTypes.ClientReport);
         }
 
         public void ExportFullDebtReport()
         {
-            var report = _summedReportRetriever.GetFullDebtReport();
-            _fileSystemController.WriteToFile(report);
+            var clientModels = _fileSystemController.ReadClientLogs();
+            var centurionModels = _fileSystemController.ReadCenturionLogs();
+            var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
+            _fileSystemController.WriteToFile(fullDeptReport);
         }
 
         public void ExportSummedDebtReport()
         {
-            var report = _summedReportRetriever.GetSummedDebtReport();
-            _fileSystemController.WriteToFile(report);
+            var clientModels = _fileSystemController.ReadClientLogs();
+            var centurionModels = _fileSystemController.ReadCenturionLogs();
+            var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
+
+            var summedDeptReport = _reportRetriever.GetSummedDebtReport(fullDeptReport);
+
+            _fileSystemController.WriteToFile(summedDeptReport);
         }
 
         public void DeleteClientReport()
         {
-            throw new System.NotImplementedException();
+            _fileSystemController.DeleteReport(ReportTypes.ClientReport);
         }
 
         public void DeleteCenturionReport()
         {
-            throw new System.NotImplementedException();
+            _fileSystemController.DeleteReport(ReportTypes.CenturionReport);
         }
     }
 }

@@ -65,7 +65,7 @@
     </Compile>
     <Compile Include="Models\ReportModels\CenturionReportModel.cs" />
     <Compile Include="Models\ReportModels\ClientReportModel.cs" />
-    <Compile Include="Models\ReportModels\FullDatabseModel.cs" />
+    <Compile Include="Models\ReportModels\FullDatabaseModel.cs" />
     <Compile Include="Models\Enums\ReportTypes.cs" />
     <Compile Include="Models\Enums\MonthEnum.cs" />
     <Compile Include="Models\ReportModels\SummedDatabaseModel.cs" />
@@ -77,8 +77,8 @@
     <Compile Include="Utilities\DataConverter\IDataConverter.cs" />
     <Compile Include="Utilities\DataImporter\DataImporter.cs" />
     <Compile Include="Utilities\DataImporter\IDataImporter.cs" />
-    <Compile Include="Utilities\SummedReportRetriever\ISummedReportRetriever.cs" />
-    <Compile Include="Utilities\SummedReportRetriever\SummedReportRetriever.cs" />
+    <Compile Include="Utilities\ReportRetriever\IReportRetriever.cs" />
+    <Compile Include="Utilities\ReportRetriever\ReportRetriever.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

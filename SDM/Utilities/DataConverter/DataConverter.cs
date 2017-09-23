@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SDM.Models.Enums;
 using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.DataConverter
@@ -19,52 +18,8 @@ namespace SDM.Utilities.DataConverter
         private const string LateBelow60 = "Late<30,30<Late<60,60<Late<90,90<Late";
         private const string LateBelow90 = "Late<30,30<Late<60,60<Late<90,90<Late";
         private const string LateAbove90 = "Late<30,30<Late<60,60<Late<90,90<Late";
-        private const string InvoiceDate = "Invoice date";
-        private const string PaymentTerms = "Payment terms";
-        private const string AmountDue = "Amount due";
-        private const string AmountPaid = "Amount paid";
 
-        //public List<ClientModelRow> ConvertCsvToClientDataModel(List<string> data)
-        //{
-        //    var header = data[0].Split(',').ToList();
-        //    var invoiceNumberPlacement = header.FindIndex(headerItem => string.Equals(headerItem, InvoiceNumber, StringComparison.OrdinalIgnoreCase));
-        //    var invoiceDatePlacement = header.FindIndex(headerItem => string.Equals(headerItem, InvoiceDate, StringComparison.OrdinalIgnoreCase));
-        //    var paymentTermsPlacement = header.FindIndex(headerItem => string.Equals(headerItem, PaymentTerms, StringComparison.OrdinalIgnoreCase));
-        //    var amountDuePlacement = header.FindIndex(headerItem => string.Equals(headerItem, AmountDue, StringComparison.OrdinalIgnoreCase));
-
-        //    data.RemoveAt(0);
-        //    var clientModelList = data
-        //        .Select(line => line.Split(','))
-        //        .Select(lineParams => new ClientModelRow
-        //        {
-        //            InvoiceNumber = lineParams[invoiceNumberPlacement],
-        //            InvoiceDate = DateTime.Parse(lineParams[invoiceDatePlacement]),
-        //            AmountDue = int.Parse(lineParams[amountDuePlacement]),
-        //            PaymentTerms = int.Parse(lineParams[paymentTermsPlacement])
-        //        })
-        //        .ToList();
-
-        //    return clientModelList;
-        //}
-
-        //public List<CenturionModelRow> ConvertCsvToCenturionModel(List<string> data)
-        //{
-        //    var header = data[0].Split(',').ToList();
-        //    var clientIdPlacement = header.FindIndex(headerItem => string.Equals(headerItem, ClientId, StringComparison.OrdinalIgnoreCase));
-        //    var invoiceNumberPlacement = header.FindIndex(headerItem => string.Equals(headerItem, InvoiceNumber, StringComparison.OrdinalIgnoreCase));
-        //    var paymentDatePlacement = header.FindIndex(headerItem => string.Equals(headerItem, PaymentDate, StringComparison.OrdinalIgnoreCase));
-        //    var amountPaidPlacement = header.FindIndex(headerItem => string.Equals(headerItem, AmountPaid, StringComparison.OrdinalIgnoreCase));
-
-        //    data.RemoveAt(0);
-        //    var clientModelList = data
-        //        .Select(line => line.Split(','))
-        //        .Select(lineParams => new CenturionModelRow { InvoiceNumber = lineParams[invoiceNumberPlacement], PaymentDate = DateTime.Parse(lineParams[paymentDatePlacement]), ClientId = lineParams[clientIdPlacement], AmountPaid = int.Parse(lineParams[amountPaidPlacement])})
-        //        .ToList();
-
-        //    return clientModelList;
-        //}
-
-        public List<string> ConvertFullDatabaseToCsv(FullDatabseModel data)
+        public List<string> ConvertToCsv(FullDatabaseModel data)
         {
             var csvData = new List<string>();
 
@@ -85,7 +40,7 @@ namespace SDM.Utilities.DataConverter
             return csvData;
         }
 
-        public Dictionary<string, List<string>> ConvertSummedDatabaseToCsv(SummedDatabaseModel data)
+        public Dictionary<string, List<string>> ConvertToCsv(SummedDatabaseModel data)
         {
             var csvsByPartner = new Dictionary<string, List<string>>();
             foreach (var summedDatabasePartner in data.SummedDatabase)
@@ -117,10 +72,16 @@ namespace SDM.Utilities.DataConverter
         {
             var clientReport = new ClientReportModel();
             data.RemoveAt(0);
-            foreach (var clientReportRow in data)
-            {
-                //TODO: get data from client report
-            }
+            clientReport.ClientReport = data
+                .Select(line => line.Split(','))
+                .Select(lineParams => new ClientModelRow
+                {
+                    InvoiceNumber = lineParams[15],
+                    InvoiceDate = DateTime.Parse(lineParams[19]),
+                    AmountDue = int.Parse(lineParams[16]),
+                    PaymentTerms = int.Parse(lineParams[14])
+                })
+                .ToList();
 
             return clientReport;
         }
@@ -129,10 +90,16 @@ namespace SDM.Utilities.DataConverter
         {
             var centurionReport = new CenturionReportModel();
             data.RemoveAt(0);
-            foreach (var centurionReportRow in data)
-            {
-                //TODO: get data from centurion report
-            }
+            centurionReport.CenturionReport = data
+                .Select(line => line.Split(','))
+                .Select(lineParams => new CenturionModelRow
+                {
+                    InvoiceNumber = lineParams[3],
+                    PaymentDate = DateTime.Parse(lineParams[5]),
+                    ClientId = lineParams[0],
+                    AmountPaid = int.Parse(lineParams[7])
+                })
+                .ToList();
 
             return centurionReport;
         }
