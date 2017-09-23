@@ -2,7 +2,7 @@
 {
     public interface ISDM
     {
-        void ImportClientReport();
+        void ImportClientReport(string clientId);
 
         void ImportcenturionReport();
 
@@ -13,5 +13,7 @@
         void DeleteClientReport();
 
         void DeleteCenturionReport();
+
+        void SetLatencyConversionTable();
     }
 }

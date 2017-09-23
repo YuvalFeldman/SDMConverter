@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SDM.Models.LatencyConversionModel;
 using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.DataConverter
@@ -9,8 +10,10 @@ namespace SDM.Utilities.DataConverter
 
         Dictionary<string, List<string>> ConvertToCsv(SummedDatabaseModel data);
 
-        ClientReportModel  ConvertCsvToClientDataModel(List<string> data);
+        ClientReportModel  ConvertCsvToClientDataModel(List<string> data, LatencyConversionModel latencyConversionModel);
 
         CenturionReportModel ConvertCsvToCenturionModel(List<string> data);
+
+        LatencyConversionModel ConvertCsvToLatencyConversionModel(List<string> data);
     }
 }

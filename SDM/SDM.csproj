@@ -63,6 +63,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\LatencyConversionModel\LatencyConversionModel.cs" />
     <Compile Include="Models\ReportModels\CenturionReportModel.cs" />
     <Compile Include="Models\ReportModels\ClientReportModel.cs" />
     <Compile Include="Models\ReportModels\FullDatabaseModel.cs" />
@@ -79,6 +80,9 @@
     <Compile Include="Utilities\DataImporter\IDataImporter.cs" />
     <Compile Include="Utilities\ReportRetriever\IReportRetriever.cs" />
     <Compile Include="Utilities\ReportRetriever\ReportRetriever.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

@@ -16,7 +16,7 @@ namespace SDM.Models.ReportModels
     public class SummedDatabaseRow
     {
         public DateTime Month { get; set; }
-        public string InvoiceNumber { get; set; }
+        public int InvoiceNumber { get; set; }
         public int PaymentDue { get; set; }
         public int PaymentPaid { get; set; }
         public int PaidBelow30 { get; set; }

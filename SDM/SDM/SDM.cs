@@ -1,5 +1,6 @@
 ﻿using SDM.DAL.FileSystemController;
 using SDM.Models.Enums;
+using SDM.Models.LatencyConversionModel;
 using SDM.Utilities.ReportRetriever;
 
 namespace SDM.SDM
@@ -8,6 +9,7 @@ namespace SDM.SDM
     {
         private readonly IFileSystemController _fileSystemController;
         private readonly IReportRetriever _reportRetriever;
+        private LatencyConversionModel _latencyConversionModel = new LatencyConversionModel();
 
         public SDM(IFileSystemController fileSystemController, IReportRetriever reportRetriever)
         {
@@ -15,9 +17,9 @@ namespace SDM.SDM
             _reportRetriever = reportRetriever;
         }
 
-        public void ImportClientReport()
+        public void ImportClientReport(string clientId)
         {
-            _fileSystemController.LogData(ReportTypes.ClientReport);
+            _fileSystemController.LogData(ReportTypes.ClientReport, clientId);
         }
 
         public void ImportcenturionReport()
@@ -27,7 +29,7 @@ namespace SDM.SDM
 
         public void ExportFullDebtReport()
         {
-            var clientModels = _fileSystemController.ReadClientLogs();
+            var clientModels = _fileSystemController.ReadClientLogs(_latencyConversionModel);
             var centurionModels = _fileSystemController.ReadCenturionLogs();
             var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
             _fileSystemController.WriteToFile(fullDeptReport);
@@ -35,7 +37,7 @@ namespace SDM.SDM
 
         public void ExportSummedDebtReport()
         {
-            var clientModels = _fileSystemController.ReadClientLogs();
+            var clientModels = _fileSystemController.ReadClientLogs(_latencyConversionModel);
             var centurionModels = _fileSystemController.ReadCenturionLogs();
             var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
 
@@ -52,6 +54,11 @@ namespace SDM.SDM
         public void DeleteCenturionReport()
         {
             _fileSystemController.DeleteReport(ReportTypes.CenturionReport);
+        }
+
+        public void SetLatencyConversionTable()
+        {
+            _latencyConversionModel = _fileSystemController.ReadLatencyConversionTable();
         }
     }
 }

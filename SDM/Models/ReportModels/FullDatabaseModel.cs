@@ -10,7 +10,7 @@ namespace SDM.Models.ReportModels
     public class FullDatabaseRow
     {
         public string ClientId { get; set; }
-        public string InvoiceNumber { get; set; }
+        public int InvoiceNumber { get; set; }
         public int PaymentDue { get; set; }
         public DateTime PaymentDueDate { get; set; }
         public List<PaymentDateLatencyPaid> Payments { get; set; } = new List<PaymentDateLatencyPaid>();

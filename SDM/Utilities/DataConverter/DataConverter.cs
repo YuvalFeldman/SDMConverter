@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SDM.Models.LatencyConversionModel;
 using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.DataConverter
@@ -69,7 +70,7 @@ namespace SDM.Utilities.DataConverter
             return csvsByPartner;
         }
 
-        public ClientReportModel ConvertCsvToClientDataModel(List<string> data)
+        public ClientReportModel ConvertCsvToClientDataModel(List<string> data, LatencyConversionModel latencyConversionModel)
         {
             var clientReport = new ClientReportModel();
             data.RemoveAt(0);
@@ -77,10 +78,14 @@ namespace SDM.Utilities.DataConverter
                 .Select(line => line.Split(','))
                 .Select(lineParams => new ClientModelRow
                 {
-                    InvoiceNumber = lineParams[15],
+                    InvoiceNumber = latencyConversionModel.LatencyConversionTable.ContainsKey(lineParams[20]) && 
+                                    latencyConversionModel.LatencyConversionTable[lineParams[20]].ContainsKey(int.Parse(lineParams[15])) ?
+                                    latencyConversionModel.LatencyConversionTable[lineParams[20]][int.Parse(lineParams[15])] :
+                                    int.Parse(lineParams[15]),
                     InvoiceDate = DateTime.Parse(lineParams[19]),
                     AmountDue = int.Parse(lineParams[16]),
-                    PaymentTerms = int.Parse(lineParams[14])
+                    PaymentTerms = int.Parse(lineParams[14]),
+                    ClientId = lineParams[20]
                 })
                 .ToList();
 
@@ -103,6 +108,28 @@ namespace SDM.Utilities.DataConverter
                 .ToList();
 
             return centurionReport;
+        }
+
+        public LatencyConversionModel ConvertCsvToLatencyConversionModel(List<string> data)
+        {
+            var latencyConversionModel = new LatencyConversionModel();
+            var conversionHeader = data[0].Split(',');
+            data.RemoveAt(0);
+
+            foreach (var latencyRow in data)
+            {
+                var splitRow = latencyRow.Split(',');
+                var clientId = splitRow[0];
+                var conversionRow = new Dictionary<int, int>();
+                for (var i = 1; i < conversionHeader.Length; i++)
+                {
+                    conversionRow.Add(int.Parse(conversionHeader[i]), int.Parse(splitRow[i]));
+                }
+
+                latencyConversionModel.LatencyConversionTable.Add(clientId, conversionRow);
+            }
+
+            return latencyConversionModel;
         }
     }
 }

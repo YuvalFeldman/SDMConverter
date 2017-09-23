@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using SDM.DAL.FileWizard;
 using SDM.Models.Enums;
+using SDM.Models.LatencyConversionModel;
 using SDM.Models.ReportModels;
 using SDM.Utilities.DataConverter;
 
@@ -20,11 +21,11 @@ namespace SDM.DAL.FileSystemController
             _dataConverter = dataConverter;
         }
 
-        public List<ClientReportModel> ReadClientLogs()
+        public List<ClientReportModel> ReadClientLogs(LatencyConversionModel latencyConversionModel)
         {
             return _fileWizard.GetFileNamesInDirectory($".\\ImportLogs\\{ReportTypes.ClientReport}")
                 .Select(filePath => _fileWizard.ReadFileContents(filePath))
-                .Select(fileContent => _dataConverter.ConvertCsvToClientDataModel(fileContent))
+                .Select(fileContent => _dataConverter.ConvertCsvToClientDataModel(fileContent, latencyConversionModel))
                 .ToList();
         }
 
@@ -55,7 +56,7 @@ namespace SDM.DAL.FileSystemController
             }
         }
 
-        public void LogData(ReportTypes reportType)
+        public void LogData(ReportTypes reportType, string clientId = null)
         {
             var path = _fileWizard.GetSaveDialogFilePath();
 
@@ -70,6 +71,18 @@ namespace SDM.DAL.FileSystemController
 
             _fileWizard.CreateDirectory(logFolder);
             _fileWizard.CopyFileToReportLogFolder(path, newFilePath);
+
+            if (!string.IsNullOrEmpty(clientId))
+            {
+                var fileContent = _fileWizard.ReadFileContents(newFilePath);
+                fileContent[0] = $"{fileContent[0]}, client id";
+                for (var i = 1; i < fileContent.Count; i++)
+                {
+                    fileContent[i] = $"{fileContent[i]}, {clientId}";
+                }
+
+                File.WriteAllLines(newFilePath, fileContent);
+            }
         }
 
         public void DeleteReport(ReportTypes reportType)
@@ -77,5 +90,14 @@ namespace SDM.DAL.FileSystemController
             var filePath = _fileWizard.GetOpenDialogFilePath($".\\ImportLogs\\{reportType}");
             _fileWizard.DeleteFile(filePath);
         }
+
+        public LatencyConversionModel ReadLatencyConversionTable()
+        {
+            var path = _fileWizard.GetOpenDialogFilePath($".\\ImportLogs\\LatencyConversionTable");
+            var latencyConversionTableContent = _fileWizard.ReadFileContents(path);
+
+            return _dataConverter.ConvertCsvToLatencyConversionModel(latencyConversionTableContent);
+        }
+
     }
 }

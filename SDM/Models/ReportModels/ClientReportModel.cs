@@ -9,7 +9,9 @@ namespace SDM.Models.ReportModels
     }
     public class ClientModelRow
     {
-        public string InvoiceNumber { get; set; }
+        public string ClientId { get; set; }
+
+        public int InvoiceNumber { get; set; }
 
         public DateTime InvoiceDate { get; set; }
 
