@@ -17,6 +17,6 @@ namespace SDM.Models.ReportModels
 
         public int PaymentTerms { get; set; }
 
-        public int AmountDue { get; set; }
+        public float AmountDue { get; set; }
     }
 }

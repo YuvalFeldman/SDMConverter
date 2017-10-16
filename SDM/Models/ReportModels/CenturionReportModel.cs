@@ -11,10 +11,10 @@ namespace SDM.Models.ReportModels
     {
         public string ClientId { get; set; }
 
-        public string InvoiceNumber { get; set; }
+        public int InvoiceNumber { get; set; }
 
         public DateTime PaymentDate { get; set; }
 
-        public int AmountPaid { get; set; }
+        public float AmountPaid { get; set; }
     }
 }

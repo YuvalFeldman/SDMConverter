@@ -29,7 +29,8 @@ namespace SDM.Utilities.DataImporter
                         clientReportRow.InvoiceDate.Year,
                         clientReportRow.InvoiceDate.Month,
                         DateTime.DaysInMonth(clientReportRow.InvoiceDate.Year, clientReportRow.InvoiceDate.Month)).
-                        AddDays(clientReportRow.PaymentTerms)
+                        AddDays(clientReportRow.PaymentTerms),
+                    ClientId = clientReportRow.ClientId
                 };
 
                 fullDatabase.FullDatabase.Add(newDatabaseRow);
@@ -46,7 +47,15 @@ namespace SDM.Utilities.DataImporter
             //TODO: export errors list with rows that have new invoice numbers
             foreach (var uniqueCenturionReportRow in uniqueCenturionReportRows)
             {
-                var fullDbRow = fullDatabase.FullDatabase.First(row => row.InvoiceNumber.Equals(uniqueCenturionReportRow.InvoiceNumber));
+                var fullDbRow = fullDatabase
+                    .FullDatabase
+                    .FirstOrDefault(row => row.InvoiceNumber.Equals(uniqueCenturionReportRow.InvoiceNumber));
+
+                if (fullDbRow == null)
+                {
+                    continue;
+                }
+
                 fullDbRow.ClientId = uniqueCenturionReportRow.ClientId;
                 var payment = new PaymentDateLatencyPaid
                 {

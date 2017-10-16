@@ -35,9 +35,9 @@ namespace SDM.Utilities.DataConverter
             csvData.AddRange(
                 from databaseRow 
                 in data.FullDatabase
-                let databaseRowString = $"{databaseRow.ClientId},{databaseRow.InvoiceNumber},{databaseRow.PaymentDue},{databaseRow.PaymentDueDate}"
+                let databaseRowString = $"{databaseRow.ClientId},{databaseRow.InvoiceNumber},{databaseRow.PaymentDue},{databaseRow.PaymentDueDate.Day}.{databaseRow.PaymentDueDate.Month}.{databaseRow.PaymentDueDate.Year}"
                 select databaseRow.Payments
-                .Aggregate(databaseRowString, (current, paymentDateLatencyPaid) => $"{current},{paymentDateLatencyPaid.PaymentDate},{paymentDateLatencyPaid.PaymentPaid},{paymentDateLatencyPaid.Latency}"));
+                .Aggregate(databaseRowString, (current, paymentDateLatencyPaid) => $"{current},{paymentDateLatencyPaid.PaymentDate.Day}.{paymentDateLatencyPaid.PaymentDate.Month}.{paymentDateLatencyPaid.PaymentDate.Year},{paymentDateLatencyPaid.PaymentPaid},{paymentDateLatencyPaid.Latency}"));
 
             return csvData;
         }
@@ -76,54 +76,40 @@ namespace SDM.Utilities.DataConverter
             var clientReport = new ClientReportModel();
             data.RemoveAt(0);
             clientReport.ClientReport = data
-                .Select(line => line.Split(','))
-                .Select(lineParams => new ClientModelRow
+                .Select(line => LineSplitter(line).ToArray())
+                .Select(lineParams =>
                 {
-                    InvoiceNumber = latencyConversionModel.LatencyConversionTable.ContainsKey(lineParams[20]) && 
-                                    latencyConversionModel.LatencyConversionTable[lineParams[20]].ContainsKey(int.Parse(lineParams[15])) ?
-                                    latencyConversionModel.LatencyConversionTable[lineParams[20]][int.Parse(lineParams[15])] :
-                                    int.Parse(lineParams[15]),
-                    InvoiceDate = TryParsingDateTime(lineParams[19]),
-                    AmountDue = int.Parse(lineParams[16]),
-                    PaymentTerms = int.Parse(lineParams[14]),
-                    ClientId = lineParams[20]
+                    var row = new ClientModelRow();
+                    row.InvoiceNumber = latencyConversionModel.LatencyConversionTable.ContainsKey(lineParams[20]) && 
+                                        latencyConversionModel.LatencyConversionTable[lineParams[20]].ContainsKey(int.Parse(lineParams[15])) ?
+                        latencyConversionModel.LatencyConversionTable[lineParams[20]][int.Parse(lineParams[15])] :
+                        int.Parse(lineParams[15]);
+                    row.InvoiceDate = TryParsingDateTime(lineParams[19], lineParams);
+                    row.AmountDue = float.Parse(lineParams[16]);
+                    row.PaymentTerms = int.Parse(lineParams[14]);
+                    row.ClientId = lineParams[20];
+                    return row;
                 })
                 .ToList();
 
             return clientReport;
         }
 
-        private DateTime TryParsingDateTime(string date)
+        private DateTime TryParsingDateTime(string date, string[] allData)
         {
-            try
+            var reformatedDate = date;
+            if (date.Contains('.'))
             {
-                return DateTime.ParseExact(date, "d.MM.yyyy", CultureInfo.InvariantCulture);
+                var splitDate = date.Split('.');
+                reformatedDate = $"{splitDate[1]}/{splitDate[0]}/{splitDate[2]}";
             }
-            catch (Exception)
+            else if (date.Contains('-'))
             {
-                try
-                {
-                    return DateTime.ParseExact(date, "d.M.yyyy", CultureInfo.InvariantCulture);
-                }
-                catch (Exception)
-                {
-                    try
-                    {
-                        return DateTime.ParseExact(date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
-                    }
-                    catch (Exception)
-                    {
-                        try
-                        {
-                            return DateTime.ParseExact(date, "dd.M.yyyy", CultureInfo.InvariantCulture);
-                        }
-                        catch (Exception)
-                        {
-                            throw new Exception($"invalid dateTime format: {date}");
-                        }
-                    }
-                }
+                var splitDate = date.Split('-');
+                reformatedDate = $"{splitDate[1]}/{splitDate[0]}/{splitDate[2]}";
             }
+
+            return DateTime.Parse(reformatedDate);
         }
 
         public CenturionReportModel ConvertCsvToCenturionModel(List<string> data)
@@ -131,13 +117,15 @@ namespace SDM.Utilities.DataConverter
             var centurionReport = new CenturionReportModel();
             data.RemoveAt(0);
             centurionReport.CenturionReport = data
-                .Select(line => line.Split(','))
-                .Select(lineParams => new CenturionModelRow
+                .Select(line => LineSplitter(line).ToArray())
+                .Select(lineParams =>
                 {
-                    InvoiceNumber = lineParams[3],
-                    PaymentDate = TryParsingDateTime(lineParams[5]),
-                    ClientId = lineParams[0],
-                    AmountPaid = int.Parse(lineParams[7])
+                    var row = new CenturionModelRow();
+                    row.InvoiceNumber = int.Parse(lineParams[3]);
+                    row.PaymentDate = TryParsingDateTime(lineParams[5], lineParams);
+                    row.ClientId = lineParams[0];
+                    row.AmountPaid = float.Parse(lineParams[7]);
+                    return row;
                 })
                 .ToList();
 
@@ -147,15 +135,15 @@ namespace SDM.Utilities.DataConverter
         public LatencyConversionModel ConvertCsvToLatencyConversionModel(List<string> data)
         {
             var latencyConversionModel = new LatencyConversionModel();
-            var conversionHeader = data[0].Split(',');
+            var conversionHeader = LineSplitter(data[0]).ToList();
             data.RemoveAt(0);
 
             foreach (var latencyRow in data)
             {
-                var splitRow = latencyRow.Split(',');
+                var splitRow = LineSplitter(latencyRow).ToList();
                 var clientId = splitRow[0];
                 var conversionRow = new Dictionary<int, int>();
-                for (var i = 1; i < conversionHeader.Length; i++)
+                for (var i = 1; i < conversionHeader.Count; i++)
                 {
                     conversionRow.Add(int.Parse(conversionHeader[i]), int.Parse(splitRow[i]));
                 }
@@ -164,6 +152,26 @@ namespace SDM.Utilities.DataConverter
             }
 
             return latencyConversionModel;
+        }
+
+        IEnumerable<string> LineSplitter(string line)
+        {
+            var fieldStart = 0;
+            for (var i = 0; i < line.Length; i++)
+            {
+                if (line[i] == ',')
+                {
+                    yield return line.Substring(fieldStart, i - fieldStart);
+                    fieldStart = i + 1;
+                }
+                if (i == line.Length - 1)
+                {
+                    yield return line.Substring(fieldStart, i - fieldStart + 1);
+                }
+                if (line[i] != '"') continue;
+
+                for (i++; line[i] != '"'; i++) { }
+            }
         }
     }
 }

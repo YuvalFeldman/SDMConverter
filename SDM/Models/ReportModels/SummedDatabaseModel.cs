@@ -17,11 +17,11 @@ namespace SDM.Models.ReportModels
     {
         public DateTime Month { get; set; }
         public int InvoiceNumber { get; set; }
-        public int PaymentDue { get; set; }
-        public int PaymentPaid { get; set; }
-        public int PaidBelow30 { get; set; }
-        public int PaidOver30Below60 { get; set; }
-        public int PaidOver60Below90 { get; set; }
-        public int PaidOver90 { get; set; }
+        public float PaymentDue { get; set; }
+        public float PaymentPaid { get; set; }
+        public float PaidBelow30 { get; set; }
+        public float PaidOver30Below60 { get; set; }
+        public float PaidOver60Below90 { get; set; }
+        public float PaidOver90 { get; set; }
     }
 }

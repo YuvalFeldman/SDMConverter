@@ -25,6 +25,10 @@ namespace SDM.DAL.FileWizard
 
         public List<string> ReadFileContents(string path)
         {
+            if (string.IsNullOrEmpty(Path.GetFileName(path)))
+            {
+                return null;
+            }
             if (!File.Exists(path))
             {
                 throw new Exception($"File does not exist, file: {path}");
@@ -32,7 +36,7 @@ namespace SDM.DAL.FileWizard
             try
             {
                 var file = new List<string>();
-                using (var reader = new StreamReader(path, Encoding.UTF8))
+                using (var reader = new StreamReader(path, Encoding.GetEncoding("windows-1255")))
                 {
                     string line;
                     while ((line = reader.ReadLine()) != null)
@@ -61,7 +65,8 @@ namespace SDM.DAL.FileWizard
 
             if (!File.Exists(path))
             {
-                File.Create(path);
+                var file = File.Create(path);
+                file.Close();
             }
         }
 

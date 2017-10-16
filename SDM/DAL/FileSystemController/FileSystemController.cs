@@ -32,6 +32,7 @@ namespace SDM.DAL.FileSystemController
         public List<CenturionReportModel> ReadCenturionLogs()
         {
             return _fileWizard.GetFileNamesInDirectory($".\\ImportLogs\\{ReportTypes.CenturionReport}")
+                .Where(path => path != null)
                 .Select(filePath => _fileWizard.ReadFileContents($".\\ImportLogs\\{ReportTypes.CenturionReport}\\{filePath}"))
                 .Select(fileContent => _dataConverter.ConvertCsvToCenturionModel(fileContent))
                 .ToList();
@@ -40,6 +41,10 @@ namespace SDM.DAL.FileSystemController
         public void WriteToFile(FullDatabaseModel data)
         {
             var path = _fileWizard.GetSaveDialogFilePath();
+            if (path == null)
+            {
+                return;
+            }
 
             var fullDatabaseCsv = _dataConverter.ConvertToCsv(data);
             _fileWizard.WriteDataToFile(path, fullDatabaseCsv);
@@ -48,11 +53,15 @@ namespace SDM.DAL.FileSystemController
         public void WriteToFile(SummedDatabaseModel data)
         {
             var path = _fileWizard.GetDirectoryPath();
+            if (path == null)
+            {
+                return;
+            }
 
             var summedDatabaseCsv = _dataConverter.ConvertToCsv(data);
             foreach (var partnerCsv in summedDatabaseCsv)
             {
-                _fileWizard.WriteDataToFile($"{path}\\{partnerCsv.Key}", partnerCsv.Value);
+                _fileWizard.WriteDataToFile($"{path}\\{partnerCsv.Key}.csv", partnerCsv.Value);
             }
         }
 
@@ -66,7 +75,7 @@ namespace SDM.DAL.FileSystemController
 
             if (File.Exists(newFilePath))
             {
-                throw new Exception($"Report with the name {Path.GetFileNameWithoutExtension(path)} already exists");
+                _fileWizard.DeleteFile(newFilePath);
             }
 
             _fileWizard.CreateDirectory(logFolder);
@@ -75,6 +84,10 @@ namespace SDM.DAL.FileSystemController
             if (!string.IsNullOrEmpty(clientId))
             {
                 var fileContent = _fileWizard.ReadFileContents(newFilePath);
+                if (fileContent == null || !fileContent.Any())
+                {
+                    return;
+                }
                 fileContent[0] = $"{fileContent[0]}, client id";
                 for (var i = 1; i < fileContent.Count; i++)
                 {
