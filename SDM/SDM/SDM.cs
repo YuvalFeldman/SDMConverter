@@ -1,4 +1,6 @@
-﻿using SDM.DAL.FileSystemController;
+﻿using System;
+using System.Windows.Forms;
+using SDM.DAL.FileSystemController;
 using SDM.Models.Enums;
 using SDM.Models.LatencyConversionModel;
 using SDM.Utilities.ReportRetriever;
@@ -19,46 +21,110 @@ namespace SDM.SDM
 
         public void ImportClientReport(string clientId)
         {
-            _fileSystemController.LogData(ReportTypes.ClientReport, clientId);
+            try
+            {
+                _fileSystemController.LogData(ReportTypes.ClientReport, clientId);
+
+                MessageBox.Show("Client report import completed successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Encountered an issue importing client report : {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
         }
 
         public void ImportcenturionReport()
         {
-            _fileSystemController.LogData(ReportTypes.CenturionReport);
+            try
+            {
+                _fileSystemController.LogData(ReportTypes.CenturionReport);
+
+                MessageBox.Show("Centurion report import completed successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Encountered an issue importing Centurion report : {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public void ExportFullDebtReport()
         {
-            var clientModels = _fileSystemController.ReadClientLogs(_latencyConversionModel);
-            var centurionModels = _fileSystemController.ReadCenturionLogs();
-            var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
-            _fileSystemController.WriteToFile(fullDeptReport);
+            try
+            {
+                var clientModels = _fileSystemController.ReadClientLogs(_latencyConversionModel);
+                var centurionModels = _fileSystemController.ReadCenturionLogs();
+                var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
+                _fileSystemController.WriteToFile(fullDeptReport);
+
+                MessageBox.Show("Full dept report exported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Encountered an issue exporting full dept report : {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public void ExportSummedDebtReport()
         {
-            var clientModels = _fileSystemController.ReadClientLogs(_latencyConversionModel);
-            var centurionModels = _fileSystemController.ReadCenturionLogs();
-            var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
+            try
+            {
+                var clientModels = _fileSystemController.ReadClientLogs(_latencyConversionModel);
+                var centurionModels = _fileSystemController.ReadCenturionLogs();
+                var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
 
-            var summedDeptReport = _reportRetriever.GetSummedDebtReport(fullDeptReport);
+                var summedDeptReport = _reportRetriever.GetSummedDebtReport(fullDeptReport);
 
-            _fileSystemController.WriteToFile(summedDeptReport);
+                _fileSystemController.WriteToFile(summedDeptReport);
+
+                MessageBox.Show("Summed dept report exported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Encountered an issue exporting summed dept report : {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public void DeleteClientReport()
         {
-            _fileSystemController.DeleteReport(ReportTypes.ClientReport);
+            try
+            {
+                _fileSystemController.DeleteReport(ReportTypes.ClientReport);
+
+                MessageBox.Show("Client report deleted successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Encountered an issue deleting client report : {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public void DeleteCenturionReport()
         {
-            _fileSystemController.DeleteReport(ReportTypes.CenturionReport);
+            try
+            {
+                _fileSystemController.DeleteReport(ReportTypes.CenturionReport);
+
+                MessageBox.Show("Centurion report deleted successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Encountered an issue deleting Centurion report : {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public void SetLatencyConversionTable()
         {
-            _latencyConversionModel = _fileSystemController.ReadLatencyConversionTable();
+            try
+            {
+                _latencyConversionModel = _fileSystemController.ReadLatencyConversionTable();
+
+                MessageBox.Show("Latency conversion table imported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Encountered an issue importing latency conversion table : {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

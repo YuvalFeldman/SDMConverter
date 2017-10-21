@@ -1,0 +1,23 @@
+The functionality for each option is:
+In the case of importing "Client data": 
+Of the file only four columns are of importance : "Invoice number, Invoice data, Payment terms, Amount due"
+Only lines with new invoice numbers will be taken into account, if the invoice number already exists the line will be ignored.
+A new line will be added to the database for every new invoice number
+Invoice date is the date the contract was initiated, payment terms is the amount of time the client has until payment is due date taken from the end of the month of the invoice date (שוטף + ימים).
+add to the database payment due date which is the invoice date + the amount of time stated in the payment terms.
+add to the database payment due which is the amount due (simply copied from the client data file.
+In the case of importing "Centurion debt collection":
+Of the file only four columns are of impartance: "client id, invoice number, payment date, amount paid"
+Only take into account invoice numbers that already exist in the database.
+All invoice numbers that do not exist will be exported into a file labeled "issues".
+client id will be copied as is into the database under client id.
+The payment data is aggregated to line end and added on with each payment in sets of three as such: the payment date and ammount paid are copied as is and the latency is the amount of days between the date the payment was supposed to be made and the date it was made. any number below zero is treated as zero.
+In case of requesting the debt report this database will be exported and returned as is.
+In case of requesting the Summed debt report a report based on the databse will be created as such:
+In case the invoice number does not have any payments paid by the client the line will be skipped not accurate. every invoice line in the data base is written into the monthly table in the summed report. If no payment was done (meaning there is no mention of that invoice in the centurion file) than the collectiom columns will be zero.
+The report is divided by month of payment due date.
+the first line of the report will be the client id followed by monthly reports
+the first line of every monthly report will be Due month - [month][year]
+after that will be rows of all the invoice number lines that had payments due that month of that year
+every line will include - invoice number and payment due amount as is, afterwards will be the payment paid which is the sum of the payment paids from the database invoice, after that will be four columns depicting the summed amounts paid by latency in jumps of 30 days.
+at the end of each month table will be a row that will be labeled total and sum the amounts due and paid from all rows in that months table

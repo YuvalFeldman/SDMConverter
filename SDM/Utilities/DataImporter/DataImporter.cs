@@ -65,6 +65,14 @@ namespace SDM.Utilities.DataImporter
 
                 var totalDaysBetweenDueAndPaid = (uniqueCenturionReportRow.PaymentDate - fullDbRow.PaymentDueDate).TotalDays;
                 payment.Latency = totalDaysBetweenDueAndPaid > 0 ? (int)totalDaysBetweenDueAndPaid : 0;
+
+
+                if (fullDbRow.Payments == null)
+                {
+                    fullDbRow.Payments = new List<PaymentDateLatencyPaid>();
+                }
+                fullDbRow.Payments.Add(payment);
+
             }
         }
     }

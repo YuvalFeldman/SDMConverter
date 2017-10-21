@@ -64,7 +64,7 @@
             this.ExportFullDb.Name = "ExportFullDb";
             this.ExportFullDb.Size = new System.Drawing.Size(260, 23);
             this.ExportFullDb.TabIndex = 2;
-            this.ExportFullDb.Text = "Export Full Database Report";
+            this.ExportFullDb.Text = "Export Full Dept Report";
             this.ExportFullDb.UseVisualStyleBackColor = true;
             this.ExportFullDb.Click += new System.EventHandler(this.ExportFullDb_Click);
             // 
@@ -74,7 +74,7 @@
             this.ExportSummedDb.Name = "ExportSummedDb";
             this.ExportSummedDb.Size = new System.Drawing.Size(260, 23);
             this.ExportSummedDb.TabIndex = 3;
-            this.ExportSummedDb.Text = "Export Summed Database Report";
+            this.ExportSummedDb.Text = "Export Summed Dept Report";
             this.ExportSummedDb.UseVisualStyleBackColor = true;
             this.ExportSummedDb.Click += new System.EventHandler(this.ExportSummedDb_Click);
             // 
