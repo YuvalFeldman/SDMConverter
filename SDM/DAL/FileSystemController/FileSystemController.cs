@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using SDM.DAL.FileWizard;
 using SDM.Models.Enums;
 using SDM.Models.LatencyConversionModel;
@@ -38,6 +39,17 @@ namespace SDM.DAL.FileSystemController
                 .ToList();
         }
 
+        public void WriteToFile(List<string> data)
+        {
+            var path = _fileWizard.GetSaveDialogFilePath();
+            if (path == null)
+            {
+                return;
+            }
+
+            _fileWizard.WriteDataToFile(path, data);
+        }
+
         public void WriteToFile(FullDatabaseModel data)
         {
             var path = _fileWizard.GetSaveDialogFilePath();
@@ -48,6 +60,8 @@ namespace SDM.DAL.FileSystemController
 
             var fullDatabaseCsv = _dataConverter.ConvertToCsv(data);
             _fileWizard.WriteDataToFile(path, fullDatabaseCsv);
+
+            MessageBox.Show("Full dept report exported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
         }
 
         public void WriteToFile(SummedDatabaseModel data)
@@ -63,12 +77,17 @@ namespace SDM.DAL.FileSystemController
             {
                 _fileWizard.WriteDataToFile($"{path}\\{partnerCsv.Key}.csv", partnerCsv.Value);
             }
+
+            MessageBox.Show("Summed dept report exported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
         }
 
         public void LogData(ReportTypes reportType, string clientId = null)
         {
             var path = _fileWizard.GetOpenDialogFilePath();
-
+            if (path == null)
+            {
+                return;
+            }
             var logFolder = $".\\ImportLogs\\{reportType}";
             var reportName = Path.GetFileName(path);
             var newFilePath = $"{logFolder}\\{reportName}";
@@ -95,22 +114,43 @@ namespace SDM.DAL.FileSystemController
                 }
 
                 File.WriteAllLines(newFilePath, fileContent);
+                MessageBox.Show(
+                    reportType == ReportTypes.ClientReport
+                        ? "Client report import completed successfully"
+                        : "Centurion report import completed successfully", "Reports manager", MessageBoxButtons.OK,
+                    MessageBoxIcon.None);
+            }
+            else
+            {
+                MessageBox.Show("report empty nothing to write", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         public void DeleteReport(ReportTypes reportType)
         {
-            var filePath = _fileWizard.GetOpenDialogFilePath($".\\ImportLogs\\{reportType}");
-            _fileWizard.DeleteFile(filePath);
+            var filePath = _fileWizard.GetOpenDialogFilePath($".\\ImportLogs\\{reportType}\\");
+            var deleteResult = _fileWizard.DeleteFile(filePath);
+
+            if (deleteResult)
+            {
+                MessageBox.Show("Report deleted successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
+            }
         }
 
         public LatencyConversionModel ReadLatencyConversionTable()
         {
             var path = _fileWizard.GetOpenDialogFilePath($".\\ImportLogs\\LatencyConversionTable");
+            if (path == null)
+            {
+                return new LatencyConversionModel();
+            }
+
             var latencyConversionTableContent = _fileWizard.ReadFileContents(path);
+            var convertedLatencyTable = _dataConverter.ConvertCsvToLatencyConversionModel(latencyConversionTableContent);
 
-            return _dataConverter.ConvertCsvToLatencyConversionModel(latencyConversionTableContent);
+            MessageBox.Show("Latency conversion table imported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
+
+            return convertedLatencyTable;
         }
-
     }
 }

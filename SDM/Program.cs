@@ -23,7 +23,7 @@ namespace SDM
                 new SDM.SDM(
                     new FileSystemController(
                         new FileWizard(new SaveFileDialog(), new FolderBrowserDialog(), new OpenFileDialog(),
-                            new OpenFileDialog()), new DataConverter()), new ReportRetriever(new DataImporter()));
+                            new OpenFileDialog()), new DataConverter()), new ReportRetriever(new DataImporter(new FileSystemController(new FileWizard(new SaveFileDialog(), new FolderBrowserDialog(), new OpenFileDialog(), new OpenFileDialog()), new DataConverter()))));
             Application.Run(new Form1(sdm));
         }
     }

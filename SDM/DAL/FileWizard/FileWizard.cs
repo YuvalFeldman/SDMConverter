@@ -78,12 +78,15 @@ namespace SDM.DAL.FileWizard
             }
         }
 
-        public void DeleteFile(string path)
+        public bool DeleteFile(string path)
         {
             if (File.Exists(path))
             {
                 File.Delete(path);
+                return true;
             }
+
+            return false;
         }
 
         public void DeleteDirectory(string path)
@@ -96,7 +99,7 @@ namespace SDM.DAL.FileWizard
 
         public List<string> GetFileNamesInDirectory(string path)
         {
-            return Directory.GetFiles(path, "*.csv").Select(Path.GetFileName).ToList();
+            return !File.Exists(path) ? new List<string>() : Directory.GetFiles(path, "*.csv").Select(Path.GetFileName).ToList();
         }
 
         public void CopyFileToReportLogFolder(string filePath, string newFilePath)
@@ -110,37 +113,27 @@ namespace SDM.DAL.FileWizard
 
         public string GetSaveDialogFilePath()
         {
-            if (_saveFileDialog.ShowDialog() != DialogResult.OK)
-            {
-                return null;
-            }
-
-            return _saveFileDialog.FileName;
+            return _saveFileDialog.ShowDialog() != DialogResult.OK ? null : _saveFileDialog.FileName;
         }
 
         public string GetOpenDialogFilePath(string limitToDirectory = null)
         {
-            _openFileDialogLimitDirectory.InitialDirectory = 
-                string.IsNullOrEmpty(limitToDirectory) ? 
-                limitToDirectory : 
-                string.Empty;
-
-            if (_openFileDialogLimitDirectory.ShowDialog() != DialogResult.OK)
+            if (!Directory.Exists(limitToDirectory))
             {
-                return null;
+                CreateDirectory(limitToDirectory);
             }
 
-            return _openFileDialogLimitDirectory.FileName;
+            _openFileDialogLimitDirectory.InitialDirectory =
+                !string.IsNullOrEmpty(limitToDirectory) ?
+                    limitToDirectory :
+                    string.Empty;
+
+            return _openFileDialogLimitDirectory.ShowDialog() != DialogResult.OK ? null : _openFileDialogLimitDirectory.FileName;
         }
 
         public string GetDirectoryPath()
         {
-            if (_folderBrowserDialog.ShowDialog() != DialogResult.OK)
-            {
-                return null;
-            }
-
-            return _folderBrowserDialog.SelectedPath;
+            return _folderBrowserDialog.ShowDialog() != DialogResult.OK ? null : _folderBrowserDialog.SelectedPath;
         }
     }
 }

@@ -1,14 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using SDM.DAL.FileSystemController;
 using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.DataImporter
 {
     public class DataImporter : IDataImporter
     {
+        private readonly IFileSystemController _fileSystemController;
+
+        public DataImporter(IFileSystemController fileSystemController)
+        {
+            _fileSystemController = fileSystemController;
+        }
+
         public void UpdateDatabase(FullDatabaseModel fullDatabase, List<ClientReportModel> data)
         {
+            if (!data.Any())
+            {
+                return;
+            }
             var uniqueClientReportRows =
                 data
                 .Select(report => report.ClientReport)
@@ -39,12 +52,17 @@ namespace SDM.Utilities.DataImporter
 
         public void UpdateDatabase(FullDatabaseModel fullDatabase, List<CenturionReportModel> data)
         {
+            if (!data.Any())
+            {
+                return;
+            }
             var uniqueCenturionReportRows =
                 data
                 .Select(report => report.CenturionReport)
                 .Aggregate((a, b) => a.Union(b).ToList());
 
-            //TODO: export errors list with rows that have new invoice numbers
+            var centurionDataWithNewInvoiceNumbers = new List<string>();
+
             foreach (var uniqueCenturionReportRow in uniqueCenturionReportRows)
             {
                 var fullDbRow = fullDatabase
@@ -53,6 +71,11 @@ namespace SDM.Utilities.DataImporter
 
                 if (fullDbRow == null)
                 {
+                    if (!centurionDataWithNewInvoiceNumbers.Any())
+                    {
+                        centurionDataWithNewInvoiceNumbers.Add("ClientId,InvoiceNumber,PaymentDate,AmountPaid");
+                    }
+                    centurionDataWithNewInvoiceNumbers.Add($"{uniqueCenturionReportRow.ClientId},{uniqueCenturionReportRow.InvoiceNumber},{uniqueCenturionReportRow.PaymentDate},{uniqueCenturionReportRow.AmountPaid}");
                     continue;
                 }
 
@@ -72,7 +95,13 @@ namespace SDM.Utilities.DataImporter
                     fullDbRow.Payments = new List<PaymentDateLatencyPaid>();
                 }
                 fullDbRow.Payments.Add(payment);
+            }
 
+            if (centurionDataWithNewInvoiceNumbers.Any())
+            {
+                MessageBox.Show("Found centurion reports with invoice numbers that did not match any client report invoice numbers, exporting to error file", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                _fileSystemController.WriteToFile(centurionDataWithNewInvoiceNumbers);
             }
         }
     }

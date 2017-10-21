@@ -24,8 +24,6 @@ namespace SDM.SDM
             try
             {
                 _fileSystemController.LogData(ReportTypes.ClientReport, clientId);
-
-                MessageBox.Show("Client report import completed successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
             catch (Exception e)
             {
@@ -39,8 +37,6 @@ namespace SDM.SDM
             try
             {
                 _fileSystemController.LogData(ReportTypes.CenturionReport);
-
-                MessageBox.Show("Centurion report import completed successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
             catch (Exception e)
             {
@@ -56,8 +52,6 @@ namespace SDM.SDM
                 var centurionModels = _fileSystemController.ReadCenturionLogs();
                 var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
                 _fileSystemController.WriteToFile(fullDeptReport);
-
-                MessageBox.Show("Full dept report exported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
             catch (Exception e)
             {
@@ -76,8 +70,6 @@ namespace SDM.SDM
                 var summedDeptReport = _reportRetriever.GetSummedDebtReport(fullDeptReport);
 
                 _fileSystemController.WriteToFile(summedDeptReport);
-
-                MessageBox.Show("Summed dept report exported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
             catch (Exception e)
             {
@@ -90,8 +82,6 @@ namespace SDM.SDM
             try
             {
                 _fileSystemController.DeleteReport(ReportTypes.ClientReport);
-
-                MessageBox.Show("Client report deleted successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
             catch (Exception e)
             {
@@ -104,8 +94,6 @@ namespace SDM.SDM
             try
             {
                 _fileSystemController.DeleteReport(ReportTypes.CenturionReport);
-
-                MessageBox.Show("Centurion report deleted successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
             catch (Exception e)
             {
@@ -118,8 +106,6 @@ namespace SDM.SDM
             try
             {
                 _latencyConversionModel = _fileSystemController.ReadLatencyConversionTable();
-
-                MessageBox.Show("Latency conversion table imported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
             catch (Exception e)
             {

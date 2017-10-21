@@ -22,7 +22,7 @@ namespace SDM.DAL.FileWizard
 
         void CreateDirectory(string path);
 
-        void DeleteFile(string path);
+        bool DeleteFile(string path);
 
         void DeleteDirectory(string path);
     }

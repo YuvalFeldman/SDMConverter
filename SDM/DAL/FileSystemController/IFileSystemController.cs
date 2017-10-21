@@ -13,6 +13,8 @@ namespace SDM.DAL.FileSystemController
 
         void LogData(ReportTypes reportType, string clientId = null);
 
+        void WriteToFile(List<string> data);
+
         void WriteToFile(FullDatabaseModel data);
 
         void WriteToFile(SummedDatabaseModel data);

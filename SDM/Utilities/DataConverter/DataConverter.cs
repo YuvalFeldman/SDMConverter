@@ -23,6 +23,10 @@ namespace SDM.Utilities.DataConverter
 
         public List<string> ConvertToCsv(FullDatabaseModel data)
         {
+            if (data == null || !data.FullDatabase.Any())
+            {
+                return new List<string>();
+            }
             var csvData = new List<string>();
 
             var header = $"{ClientId},{InvoiceNumber},{PaymentDue},{PaymentDueDate}";
@@ -44,6 +48,10 @@ namespace SDM.Utilities.DataConverter
 
         public Dictionary<string, List<string>> ConvertToCsv(SummedDatabaseModel data)
         {
+            if (data == null || !data.SummedDatabase.Any())
+            {
+                return new Dictionary<string, List<string>>();
+            }
             var csvsByPartner = new Dictionary<string, List<string>>();
             foreach (var summedDatabasePartner in data.SummedDatabase)
             {
@@ -73,6 +81,15 @@ namespace SDM.Utilities.DataConverter
 
         public ClientReportModel ConvertCsvToClientDataModel(List<string> data, LatencyConversionModel latencyConversionModel)
         {
+            if (data == null || !data.Any())
+            {
+                return new ClientReportModel();
+            }
+            if (latencyConversionModel == null)
+            {
+                latencyConversionModel = new LatencyConversionModel();
+                
+            }
             var clientReport = new ClientReportModel();
             data.RemoveAt(0);
             clientReport.ClientReport = data
@@ -84,7 +101,7 @@ namespace SDM.Utilities.DataConverter
                                         latencyConversionModel.LatencyConversionTable[lineParams[20]].ContainsKey(int.Parse(lineParams[15])) ?
                         latencyConversionModel.LatencyConversionTable[lineParams[20]][int.Parse(lineParams[15])] :
                         int.Parse(lineParams[15]);
-                    row.InvoiceDate = TryParsingDateTime(lineParams[19], lineParams);
+                    row.InvoiceDate = TryParsingDateTime(lineParams[19]);
                     row.AmountDue = float.Parse(lineParams[16]);
                     row.PaymentTerms = int.Parse(lineParams[14]);
                     row.ClientId = lineParams[20];
@@ -95,7 +112,7 @@ namespace SDM.Utilities.DataConverter
             return clientReport;
         }
 
-        private DateTime TryParsingDateTime(string date, string[] allData)
+        private DateTime TryParsingDateTime(string date)
         {
             var reformatedDate = date;
             if (date.Contains('.'))
@@ -114,6 +131,10 @@ namespace SDM.Utilities.DataConverter
 
         public CenturionReportModel ConvertCsvToCenturionModel(List<string> data)
         {
+            if (data == null || !data.Any())
+            {
+                return new CenturionReportModel();
+            }
             var centurionReport = new CenturionReportModel();
             data.RemoveAt(0);
             centurionReport.CenturionReport = data
@@ -122,7 +143,7 @@ namespace SDM.Utilities.DataConverter
                 {
                     var row = new CenturionModelRow();
                     row.InvoiceNumber = int.Parse(lineParams[3]);
-                    row.PaymentDate = TryParsingDateTime(lineParams[5], lineParams);
+                    row.PaymentDate = TryParsingDateTime(lineParams[5]);
                     row.ClientId = lineParams[0];
                     row.AmountPaid = float.Parse(lineParams[7]);
                     return row;
@@ -134,6 +155,10 @@ namespace SDM.Utilities.DataConverter
 
         public LatencyConversionModel ConvertCsvToLatencyConversionModel(List<string> data)
         {
+            if (data == null || !data.Any())
+            {
+                return new LatencyConversionModel();
+            }
             var latencyConversionModel = new LatencyConversionModel();
             var conversionHeader = LineSplitter(data[0]).ToList();
             data.RemoveAt(0);
