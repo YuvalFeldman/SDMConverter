@@ -114,16 +114,12 @@ namespace SDM.DAL.FileSystemController
                 }
 
                 File.WriteAllLines(newFilePath, fileContent);
-                MessageBox.Show(
-                    reportType == ReportTypes.ClientReport
-                        ? "Client report import completed successfully"
-                        : "Centurion report import completed successfully", "Reports manager", MessageBoxButtons.OK,
-                    MessageBoxIcon.None);
             }
-            else
-            {
-                MessageBox.Show("report empty nothing to write", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
+            MessageBox.Show(
+                reportType == ReportTypes.ClientReport
+                    ? "Client report import completed successfully"
+                    : "Centurion report import completed successfully", "Reports manager", MessageBoxButtons.OK,
+                MessageBoxIcon.None);
         }
 
         public void DeleteReport(ReportTypes reportType)
