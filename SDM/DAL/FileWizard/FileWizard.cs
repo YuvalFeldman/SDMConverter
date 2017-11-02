@@ -63,7 +63,7 @@ namespace SDM.DAL.FileWizard
         {
             CreateDirectory(Path.GetDirectoryName(path));
 
-            if (!File.Exists(path))
+            if (!string.IsNullOrEmpty(path) && !File.Exists(path))
             {
                 var file = File.Create(path);
                 file.Close();
@@ -72,7 +72,7 @@ namespace SDM.DAL.FileWizard
 
         public void CreateDirectory(string path)
         {
-            if (!Directory.Exists(path))
+            if (!string.IsNullOrEmpty(path) && !Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
@@ -80,7 +80,7 @@ namespace SDM.DAL.FileWizard
 
         public bool DeleteFile(string path)
         {
-            if (File.Exists(path))
+            if (!string.IsNullOrEmpty(path) && File.Exists(path))
             {
                 File.Delete(path);
                 return true;
@@ -91,7 +91,7 @@ namespace SDM.DAL.FileWizard
 
         public void DeleteDirectory(string path)
         {
-            if (Directory.Exists(path))
+            if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
             {
                 Directory.Delete(path, true);
             }
@@ -99,7 +99,7 @@ namespace SDM.DAL.FileWizard
 
         public List<string> GetFileNamesInDirectory(string path)
         {
-            return !File.Exists(path) ? new List<string>() : Directory.GetFiles(path, "*.csv").Select(Path.GetFileName).ToList();
+            return !string.IsNullOrEmpty(path) && !File.Exists(path) ? new List<string>() : Directory.GetFiles(path, "*.csv").Select(Path.GetFileName).ToList();
         }
 
         public void CopyFileToReportLogFolder(string filePath, string newFilePath)
