@@ -99,7 +99,7 @@ namespace SDM.DAL.FileWizard
 
         public List<string> GetFileNamesInDirectory(string path)
         {
-            return !string.IsNullOrEmpty(path) && !File.Exists(path) ? new List<string>() : Directory.GetFiles(path, "*.csv").Select(Path.GetFileName).ToList();
+            return string.IsNullOrEmpty(path) && !File.Exists(path) ? new List<string>() : Directory.GetFiles(path, "*.csv").Select(Path.GetFileName).ToList();
         }
 
         public void CopyFileToReportLogFolder(string filePath, string newFilePath)
