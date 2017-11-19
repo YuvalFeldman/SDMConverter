@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using SDM.DAL.FileWizard;
 using SDM.Models.Enums;
@@ -113,7 +114,7 @@ namespace SDM.DAL.FileSystemController
                     fileContent[i] = $"{fileContent[i]}, {clientId}";
                 }
 
-                File.WriteAllLines(newFilePath, fileContent);
+                File.WriteAllLines(newFilePath, fileContent, Encoding.GetEncoding("windows-1255"));
             }
             MessageBox.Show(
                 reportType == ReportTypes.ClientReport

@@ -56,7 +56,7 @@ namespace SDM.DAL.FileWizard
         public void WriteDataToFile(string path, List<string> data)
         {
             CreateFile(path);
-            File.WriteAllLines(path, data);
+            File.WriteAllLines(path, data, Encoding.GetEncoding("windows-1255"));
         }
 
         public void CreateFile(string path)

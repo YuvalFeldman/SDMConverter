@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Windows.Forms;
 using SDM.Models.LatencyConversionModel;
 using SDM.Models.ReportModels;
 
@@ -96,37 +97,54 @@ namespace SDM.Utilities.DataConverter
                 .Select(line => LineSplitter(line).ToArray())
                 .Select(lineParams =>
                 {
-                    var row = new ClientModelRow();
-                    row.InvoiceNumber = latencyConversionModel.LatencyConversionTable.ContainsKey(lineParams[20]) && 
-                                        latencyConversionModel.LatencyConversionTable[lineParams[20]].ContainsKey(int.Parse(lineParams[15])) ?
-                        latencyConversionModel.LatencyConversionTable[lineParams[20]][int.Parse(lineParams[15])] :
-                        int.Parse(lineParams[15]);
-                    row.InvoiceDate = TryParsingDateTime(lineParams[19]);
-                    row.AmountDue = float.Parse(lineParams[16]);
-                    row.PaymentTerms = int.Parse(lineParams[14]);
-                    row.ClientId = lineParams[20];
-                    return row;
+                    try
+                    {
+                        var row = new ClientModelRow();
+                        row.InvoiceNumber = latencyConversionModel.LatencyConversionTable.ContainsKey(lineParams[20]) &&
+                                            latencyConversionModel.LatencyConversionTable[lineParams[20]].ContainsKey(int.Parse(lineParams[15])) ?
+                            latencyConversionModel.LatencyConversionTable[lineParams[20]][int.Parse(lineParams[15])] :
+                            int.Parse(lineParams[15]);
+                        row.InvoiceDate = TryParsingDateTime(lineParams[19], true);
+                        row.AmountDue = float.Parse(lineParams[16]);
+                        row.PaymentTerms = int.Parse(lineParams[14]);
+                        row.ClientId = lineParams[20];
+                        return row;
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show($"Error parsing content from client file in row: {string.Join(",", lineParams)}. Excpetion: {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return null;
+                    }
                 })
+                .Where(x => x != null)
                 .ToList();
 
             return clientReport;
         }
 
-        private DateTime TryParsingDateTime(string date)
+        private DateTime TryParsingDateTime(string date, bool dateTimeEu)
         {
             var reformatedDate = date;
-            if (date.Contains('.'))
-            {
-                var splitDate = date.Split('.');
-                reformatedDate = $"{splitDate[1]}/{splitDate[0]}/{splitDate[2]}";
-            }
-            else if (date.Contains('-'))
-            {
-                var splitDate = date.Split('-');
-                reformatedDate = $"{splitDate[1]}/{splitDate[0]}/{splitDate[2]}";
-            }
 
-            return DateTime.Parse(reformatedDate);
+            try
+            {
+                reformatedDate = reformatedDate.Replace('.', '/');
+                reformatedDate = reformatedDate.Replace('-', '/');
+                var dateSplit = reformatedDate.Split('/');
+
+                var day = dateSplit[0].Length == 1 ? "d" : "dd";
+                var month = dateSplit[1].Length == 1 ? "M" : "MM";
+                var year = dateSplit[2].Length == 2 ? "yy" : "yyyy";
+
+                var daymonthYear = dateTimeEu ? $"{day}/{month}/{year}" : $"{month}/{day}/{year}";
+
+                return DateTime.ParseExact(reformatedDate, daymonthYear, CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show($@"Could not parse date : {date} (parsed: {reformatedDate}), format is eu: {dateTimeEu}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
         }
 
         public CenturionReportModel ConvertCsvToCenturionModel(List<string> data)
@@ -141,13 +159,22 @@ namespace SDM.Utilities.DataConverter
                 .Select(line => LineSplitter(line).ToArray())
                 .Select(lineParams =>
                 {
-                    var row = new CenturionModelRow();
-                    row.InvoiceNumber = int.Parse(lineParams[3]);
-                    row.PaymentDate = TryParsingDateTime(lineParams[5]);
-                    row.ClientId = lineParams[0];
-                    row.AmountPaid = float.Parse(lineParams[7]);
-                    return row;
+                    try
+                    {
+                        var row = new CenturionModelRow();
+                        row.InvoiceNumber = int.Parse(lineParams[3]);
+                        row.PaymentDate = TryParsingDateTime(lineParams[5], false);
+                        row.ClientId = lineParams[0];
+                        row.AmountPaid = float.Parse(lineParams[7]);
+                        return row;
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show($"Error parsing content from centurion file in row: {string.Join(",", lineParams)}. Excpetion: {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return null;
+                    }
                 })
+                .Where(x => x != null)
                 .ToList();
 
             return centurionReport;
