@@ -40,7 +40,7 @@ namespace SDM
 
         private void DeleteClientData_Click(object sender, System.EventArgs e)
         {
-            _sdm.DeleteClientReport();
+            _sdm.GetReportInvoiceIdIssues();
         }
 
         private void LatencyConversionTable_Click(object sender, System.EventArgs e)

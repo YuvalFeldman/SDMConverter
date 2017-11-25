@@ -83,5 +83,12 @@ namespace SDM.Utilities.ReportRetriever
 
             return fullDatabase;
         }
+
+        public void GetInvoiceNumberIssues(List<ClientReportModel> clientReportModels, List<CenturionReportModel> centurionReportModels)
+        {
+            var fullDatabase = new FullDatabaseModel();
+            _dataImporter.UpdateDatabase(fullDatabase, clientReportModels);
+            _dataImporter.OutputInvoiceNumberIssues(fullDatabase, centurionReportModels);
+        }
     }
 }

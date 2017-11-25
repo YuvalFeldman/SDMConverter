@@ -8,5 +8,7 @@ namespace SDM.Utilities.ReportRetriever
         FullDatabaseModel GetFullDebtReport(List<ClientReportModel> clientReportModels, List<CenturionReportModel> centurionReportModels);
 
         SummedDatabaseModel GetSummedDebtReport(FullDatabaseModel fullDatabaseModel);
+
+        void GetInvoiceNumberIssues(List<ClientReportModel> clientReportModels, List<CenturionReportModel> centurionReportModels);
     }
 }

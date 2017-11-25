@@ -112,5 +112,19 @@ namespace SDM.SDM
                 MessageBox.Show($"Encountered an issue importing latency conversion table : {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        public void GetReportInvoiceIdIssues()
+        {
+            try
+            {
+                var clientModels = _fileSystemController.ReadClientLogs(_latencyConversionModel);
+                var centurionModels = _fileSystemController.ReadCenturionLogs();
+                _reportRetriever.GetInvoiceNumberIssues(clientModels, centurionModels);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Encountered an issue getting invoice number issues: {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

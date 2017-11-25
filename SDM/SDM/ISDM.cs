@@ -15,5 +15,7 @@
         void DeleteCenturionReport();
 
         void SetLatencyConversionTable();
+
+        void GetReportInvoiceIdIssues();
     }
 }

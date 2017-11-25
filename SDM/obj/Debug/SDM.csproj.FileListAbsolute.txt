@@ -24,3 +24,4 @@ C:\Users\Feldm\Desktop\ProjectFire\InWork\SDMConverter\SDM\obj\Debug\SDM.csproj.
 C:\Users\Feldm\Desktop\ProjectFire\InWork\SDMConverter\SDM\obj\Debug\SDM.csproj.CoreCompileInputs.cache
 C:\Users\Feldm\Desktop\ProjectFire\InWork\SDMConverter\SDM\obj\Debug\SDM.exe
 C:\Users\Feldm\Desktop\ProjectFire\InWork\SDMConverter\SDM\obj\Debug\SDM.pdb
+C:\Users\Feldm\Desktop\ProjectFire\InWork\SDMConverter\SDM\obj\Debug\SDM.csprojResolveAssemblyReference.cache

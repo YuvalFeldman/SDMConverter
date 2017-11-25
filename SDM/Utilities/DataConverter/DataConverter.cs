@@ -17,10 +17,10 @@ namespace SDM.Utilities.DataConverter
         private const string PaymentDate = "Payment date";
         private const string PaymentPaid = "Payment paid";
         private const string Latency = "Latency";
-        private const string LateBelow30 = "Late<30,30<Late<60,60<Late<90,90<Late";
-        private const string LateBelow60 = "Late<30,30<Late<60,60<Late<90,90<Late";
-        private const string LateBelow90 = "Late<30,30<Late<60,60<Late<90,90<Late";
-        private const string LateAbove90 = "Late<30,30<Late<60,60<Late<90,90<Late";
+        private const string LateBelow30 = "Late<30";
+        private const string LateBelow60 = "30<Late<60";
+        private const string LateBelow90 = "60<Late<90";
+        private const string LateAbove90 = "90<Late";
 
         public List<string> ConvertToCsv(FullDatabaseModel data)
         {

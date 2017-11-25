@@ -84,17 +84,17 @@
             this.DeleteCenturion.Name = "DeleteCenturion";
             this.DeleteCenturion.Size = new System.Drawing.Size(260, 23);
             this.DeleteCenturion.TabIndex = 4;
-            this.DeleteCenturion.Text = "Delete Centurion Report";
+            this.DeleteCenturion.Text = "Delete Report";
             this.DeleteCenturion.UseVisualStyleBackColor = true;
             this.DeleteCenturion.Click += new System.EventHandler(this.DeleteCenturion_Click);
             // 
             // DeleteClientData
             // 
-            this.DeleteClientData.Location = new System.Drawing.Point(432, 41);
+            this.DeleteClientData.Location = new System.Drawing.Point(12, 128);
             this.DeleteClientData.Name = "DeleteClientData";
             this.DeleteClientData.Size = new System.Drawing.Size(260, 23);
             this.DeleteClientData.TabIndex = 5;
-            this.DeleteClientData.Text = "Delete Client Data Report";
+            this.DeleteClientData.Text = "Get report invoice id issues";
             this.DeleteClientData.UseVisualStyleBackColor = true;
             this.DeleteClientData.Click += new System.EventHandler(this.DeleteClientData_Click);
             // 
