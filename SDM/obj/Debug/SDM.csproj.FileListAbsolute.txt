@@ -32,7 +32,6 @@ D:\dvlp\Git\SDMConverter\SDM\bin\Debug\Newtonsoft.Json.dll
 D:\dvlp\Git\SDMConverter\SDM\bin\Debug\Ninject.dll
 D:\dvlp\Git\SDMConverter\SDM\bin\Debug\Newtonsoft.Json.xml
 D:\dvlp\Git\SDMConverter\SDM\bin\Debug\Ninject.xml
-D:\dvlp\Git\SDMConverter\SDM\obj\Debug\SDM.csprojResolveAssemblyReference.cache
 D:\dvlp\Git\SDMConverter\SDM\obj\Debug\SDM.Form1.resources
 D:\dvlp\Git\SDMConverter\SDM\obj\Debug\SDM.Properties.Resources.resources
 D:\dvlp\Git\SDMConverter\SDM\obj\Debug\SDM.csproj.GenerateResource.Cache

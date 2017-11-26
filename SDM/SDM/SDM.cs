@@ -11,7 +11,6 @@ namespace SDM.SDM
     {
         private readonly IFileSystemController _fileSystemController;
         private readonly IReportRetriever _reportRetriever;
-        private LatencyConversionModel _latencyConversionModel = new LatencyConversionModel();
 
         public SDM(IFileSystemController fileSystemController, IReportRetriever reportRetriever)
         {
@@ -44,11 +43,12 @@ namespace SDM.SDM
             }
         }
 
-        public void ExportFullDebtReport()
+        public void ExportFullDebtReport(bool useConversionTable)
         {
             try
             {
-                var clientModels = _fileSystemController.ReadClientLogs(_latencyConversionModel);
+                var latencyConversionModel = useConversionTable ? _fileSystemController.ReadLatencyConversionTable() : new LatencyConversionModel();
+                var clientModels = _fileSystemController.ReadClientLogs(latencyConversionModel);
                 var centurionModels = _fileSystemController.ReadCenturionLogs();
                 var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
                 _fileSystemController.WriteToFile(fullDeptReport);
@@ -59,11 +59,12 @@ namespace SDM.SDM
             }
         }
 
-        public void ExportSummedDebtReport()
+        public void ExportSummedDebtReport(bool useConversionTable)
         {
             try
             {
-                var clientModels = _fileSystemController.ReadClientLogs(_latencyConversionModel);
+                var latencyConversionModel = useConversionTable ? _fileSystemController.ReadLatencyConversionTable() : new LatencyConversionModel();
+                var clientModels = _fileSystemController.ReadClientLogs(latencyConversionModel);
                 var centurionModels = _fileSystemController.ReadCenturionLogs();
                 var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
 
@@ -105,7 +106,7 @@ namespace SDM.SDM
         {
             try
             {
-                _latencyConversionModel = _fileSystemController.ReadLatencyConversionTable();
+                _fileSystemController.ImportLatencyConversionTable();
             }
             catch (Exception e)
             {
@@ -113,11 +114,12 @@ namespace SDM.SDM
             }
         }
 
-        public void GetReportInvoiceIdIssues()
+        public void GetReportInvoiceIdIssues(bool useConversionTable)
         {
             try
             {
-                var clientModels = _fileSystemController.ReadClientLogs(_latencyConversionModel);
+                var latencyConversionModel = useConversionTable ? _fileSystemController.ReadLatencyConversionTable() : new LatencyConversionModel();
+                var clientModels = _fileSystemController.ReadClientLogs(latencyConversionModel);
                 var centurionModels = _fileSystemController.ReadCenturionLogs();
                 _reportRetriever.GetInvoiceNumberIssues(clientModels, centurionModels);
             }

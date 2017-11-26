@@ -21,6 +21,8 @@ namespace SDM.DAL.FileSystemController
 
         void DeleteReport(ReportTypes reportType);
 
+        void ImportLatencyConversionTable();
+
         LatencyConversionModel ReadLatencyConversionTable();
     }
 }

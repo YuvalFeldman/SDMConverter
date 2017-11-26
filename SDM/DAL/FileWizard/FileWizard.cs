@@ -72,9 +72,14 @@ namespace SDM.DAL.FileWizard
 
         public void CreateDirectory(string path)
         {
-            if (!string.IsNullOrEmpty(path) && !Directory.Exists(path))
+            if (string.IsNullOrEmpty(path))
             {
-                Directory.CreateDirectory(path);
+                return;
+            }
+            var fullPath = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(fullPath) && !Directory.Exists(fullPath))
+            {
+                Directory.CreateDirectory(fullPath);
             }
         }
 

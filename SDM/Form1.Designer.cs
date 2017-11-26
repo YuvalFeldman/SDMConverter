@@ -36,6 +36,7 @@
             this.DeleteClientData = new System.Windows.Forms.Button();
             this.LatencyConversionTable = new System.Windows.Forms.Button();
             this.ClientIdBox = new System.Windows.Forms.TextBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // centurionImport
@@ -80,7 +81,7 @@
             // 
             // DeleteCenturion
             // 
-            this.DeleteCenturion.Location = new System.Drawing.Point(432, 12);
+            this.DeleteCenturion.Location = new System.Drawing.Point(12, 157);
             this.DeleteCenturion.Name = "DeleteCenturion";
             this.DeleteCenturion.Size = new System.Drawing.Size(260, 23);
             this.DeleteCenturion.TabIndex = 4;
@@ -100,7 +101,7 @@
             // 
             // LatencyConversionTable
             // 
-            this.LatencyConversionTable.Location = new System.Drawing.Point(12, 234);
+            this.LatencyConversionTable.Location = new System.Drawing.Point(12, 186);
             this.LatencyConversionTable.Name = "LatencyConversionTable";
             this.LatencyConversionTable.Size = new System.Drawing.Size(260, 23);
             this.LatencyConversionTable.TabIndex = 6;
@@ -112,16 +113,28 @@
             // 
             this.ClientIdBox.Location = new System.Drawing.Point(278, 41);
             this.ClientIdBox.Name = "ClientIdBox";
-            this.ClientIdBox.Size = new System.Drawing.Size(100, 20);
+            this.ClientIdBox.Size = new System.Drawing.Size(139, 20);
             this.ClientIdBox.TabIndex = 7;
             this.ClientIdBox.Text = "Client Id";
             this.ClientIdBox.TextChanged += new System.EventHandler(this.ClientIdBox_TextChanged);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(278, 74);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(126, 17);
+            this.checkBox1.TabIndex = 8;
+            this.checkBox1.Text = "Use conversion table";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 278);
+            this.ClientSize = new System.Drawing.Size(426, 217);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.ClientIdBox);
             this.Controls.Add(this.LatencyConversionTable);
             this.Controls.Add(this.DeleteClientData);
@@ -147,6 +160,7 @@
         private System.Windows.Forms.Button DeleteClientData;
         private System.Windows.Forms.Button LatencyConversionTable;
         private System.Windows.Forms.TextBox ClientIdBox;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 

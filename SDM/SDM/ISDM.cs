@@ -6,9 +6,9 @@
 
         void ImportcenturionReport();
 
-        void ExportFullDebtReport();
+        void ExportFullDebtReport(bool useConversionTable);
 
-        void ExportSummedDebtReport();
+        void ExportSummedDebtReport(bool useConversionTable);
 
         void DeleteClientReport();
 
@@ -16,6 +16,6 @@
 
         void SetLatencyConversionTable();
 
-        void GetReportInvoiceIdIssues();
+        void GetReportInvoiceIdIssues(bool useConversionTable);
     }
 }

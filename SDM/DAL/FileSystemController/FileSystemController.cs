@@ -134,19 +134,31 @@ namespace SDM.DAL.FileSystemController
             }
         }
 
+        public void ImportLatencyConversionTable()
+        {
+            if (!Directory.Exists($".\\ImportLogs\\LatencyConversionTable"))
+            {
+                Directory.CreateDirectory($".\\ImportLogs\\LatencyConversionTable");
+            }
+            if (!File.Exists($".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv"))
+            {
+                File.Create($".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv");
+            }
+            var path = _fileWizard.GetOpenDialogFilePath();
+            File.Copy(path, ".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv", true);
+
+            MessageBox.Show("Latency conversion table imported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
+        }
+
         public LatencyConversionModel ReadLatencyConversionTable()
         {
-            var path = _fileWizard.GetOpenDialogFilePath($".\\ImportLogs\\LatencyConversionTable");
-            if (path == null)
+            var latencyConversionTableContent = _fileWizard.ReadFileContents($".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv");
+            if (latencyConversionTableContent == null)
             {
                 return new LatencyConversionModel();
             }
 
-            var latencyConversionTableContent = _fileWizard.ReadFileContents(path);
             var convertedLatencyTable = _dataConverter.ConvertCsvToLatencyConversionModel(latencyConversionTableContent);
-
-            MessageBox.Show("Latency conversion table imported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
-
             return convertedLatencyTable;
         }
     }

@@ -25,12 +25,12 @@ namespace SDM
 
         private void ExportFullDb_Click(object sender, System.EventArgs e)
         {
-            _sdm.ExportFullDebtReport();
+            _sdm.ExportFullDebtReport(checkBox1.Checked);
         }
 
         private void ExportSummedDb_Click(object sender, System.EventArgs e)
         {
-            _sdm.ExportSummedDebtReport();
+            _sdm.ExportSummedDebtReport(checkBox1.Checked);
         }
 
         private void DeleteCenturion_Click(object sender, System.EventArgs e)
@@ -40,7 +40,7 @@ namespace SDM
 
         private void DeleteClientData_Click(object sender, System.EventArgs e)
         {
-            _sdm.GetReportInvoiceIdIssues();
+            _sdm.GetReportInvoiceIdIssues(checkBox1.Checked);
         }
 
         private void LatencyConversionTable_Click(object sender, System.EventArgs e)
@@ -49,6 +49,11 @@ namespace SDM
         }
 
         private void ClientIdBox_TextChanged(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, System.EventArgs e)
         {
 
         }
