@@ -24,13 +24,13 @@ namespace SDM.Utilities.ReportRetriever
                 {
                     continue;                    
                 }
-                if (dataBaseRowsByClientId.ContainsKey(fullDatabaseRow.ClientId))
+                if (dataBaseRowsByClientId.ContainsKey(fullDatabaseRow.ClientId.Replace(" ", "")))
                 {
-                    dataBaseRowsByClientId[fullDatabaseRow.ClientId].Add(fullDatabaseRow);
+                    dataBaseRowsByClientId[fullDatabaseRow.ClientId.Replace(" ", "")].Add(fullDatabaseRow);
                 }
                 else
                 {
-                    dataBaseRowsByClientId.Add(fullDatabaseRow.ClientId, new List<FullDatabaseRow> { fullDatabaseRow });
+                    dataBaseRowsByClientId.Add(fullDatabaseRow.ClientId.Replace(" ", ""), new List<FullDatabaseRow> { fullDatabaseRow });
                 }
             }
 
@@ -50,24 +50,22 @@ namespace SDM.Utilities.ReportRetriever
                     }
                 }
 
-                var clientSummedDatabase = new SummedDatabasePartner
-                {
-                    ClientName = clientDbRows.Key,
-                    SummedDbPerDate = clientDbRowsSplitByPaymentDueDate
-                        .ToDictionary(key => key.Key, value => value.Value.Select(databaseRow =>
-                        {
-                            var row = new SummedDatabaseRow();
-                            row.Month = value.Key;
-                            row.InvoiceNumber = databaseRow.InvoiceNumber;
-                            row.PaymentDue = databaseRow.PaymentDue;
-                            row.PaymentPaid = databaseRow.Payments.Sum(payment => payment.PaymentPaid);
-                            row.PaidBelow30 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays < 30).Sum(payment => payment.PaymentPaid);
-                            row.PaidOver30Below60 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays > 30 && (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays < 60).Sum(payment => payment.PaymentPaid);
-                            row.PaidOver60Below90 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays > 60 && (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays < 90).Sum(payment => payment.PaymentPaid);
-                            row.PaidOver90 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays > 90).Sum(payment => payment.PaymentPaid);
-                            return row;
-                        }).ToList())
-                };
+                var clientSummedDatabase = new SummedDatabasePartner();
+                clientSummedDatabase.ClientName = clientDbRows.Key;
+                clientSummedDatabase.SummedDbPerDate = clientDbRowsSplitByPaymentDueDate
+                    .ToDictionary(key => key.Key, value => value.Value.Select(databaseRow =>
+                    {
+                        var row = new SummedDatabaseRow();
+                        row.Month = value.Key;
+                        row.InvoiceNumber = databaseRow.InvoiceNumber;
+                        row.PaymentDue = databaseRow.PaymentDue;
+                        row.PaymentPaid = databaseRow.Payments.Sum(payment => payment.PaymentPaid);
+                        row.PaidBelow30 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays < 30).Sum(payment => payment.PaymentPaid);
+                        row.PaidOver30Below60 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays > 30 && (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays < 60).Sum(payment => payment.PaymentPaid);
+                        row.PaidOver60Below90 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays > 60 && (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays < 90).Sum(payment => payment.PaymentPaid);
+                        row.PaidOver90 = databaseRow.Payments.Where(payment => (databaseRow.PaymentDueDate - payment.PaymentDate.AddDays(payment.Latency)).TotalDays > 90).Sum(payment => payment.PaymentPaid);
+                        return row;
+                    }).ToList());
 
                 summedDatabase.SummedDatabase.Add(clientDbRows.Key, clientSummedDatabase);
             }
