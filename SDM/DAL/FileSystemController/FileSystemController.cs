@@ -142,7 +142,8 @@ namespace SDM.DAL.FileSystemController
             }
             if (!File.Exists($".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv"))
             {
-                File.Create($".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv");
+                var fileState = File.Create($".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv");
+                fileState.Close();
             }
             var path = _fileWizard.GetOpenDialogFilePath();
             File.Copy(path, ".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv", true);
