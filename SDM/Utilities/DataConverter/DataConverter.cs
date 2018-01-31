@@ -162,7 +162,7 @@ namespace SDM.Utilities.DataConverter
                     try
                     {
                         var row = new CenturionModelRow();
-                        row.InvoiceNumber = int.Parse(lineParams[3]);
+                        row.InvoiceNumber = int.Parse(lineParams[4]);
                         row.PaymentDate = TryParsingDateTime(lineParams[5], true);
                         row.ClientId = lineParams[0];
                         row.AmountPaid = float.Parse(lineParams[7]);
