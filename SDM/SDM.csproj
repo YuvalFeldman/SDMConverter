@@ -53,44 +53,92 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\Bindings.cs" />
+    <Compile Include="DAL\logsDal\ISdmlogsDal.cs" />
+    <Compile Include="DAL\logsDal\SdmlogsDal.cs" />
+    <Compile Include="DAL\ReportsDal\ReportsDal.cs" />
+    <Compile Include="DAL\ReportsDal\IReportsDal.cs" />
     <Compile Include="DAL\FileSystemController\FileSystemController.cs" />
     <Compile Include="DAL\FileSystemController\IFileSystemController.cs" />
-    <Compile Include="DAL\FileWizard\FileWizard.cs" />
-    <Compile Include="DAL\FileWizard\IFileWizard.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form2.cs">
+    <Compile Include="Forms\ContentForms\ImportForms\ImportCenturionForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form2.Designer.cs">
-      <DependentUpon>Form2.cs</DependentUpon>
+    <Compile Include="Forms\ContentForms\ImportForms\ImportCenturionForm.Designer.cs">
+      <DependentUpon>ImportCenturionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ContentForms\ImportForms\ImportClientForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ContentForms\ImportForms\ImportClientForm.Designer.cs">
+      <DependentUpon>ImportClientForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ContentForms\ImportForms\ImportLatencyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ContentForms\ImportForms\ImportLatencyForm.Designer.cs">
+      <DependentUpon>ImportLatencyForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ContentForms\ExportMenuForms\FullExportMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ContentForms\ExportMenuForms\FullExportMenu.Designer.cs">
+      <DependentUpon>FullExportMenu.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ContentForms\ExportMenuForms\SummedExportMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ContentForms\ExportMenuForms\SummedExportMenu.Designer.cs">
+      <DependentUpon>SummedExportMenu.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\LatencyConversionModel\LatencyConversionModel.cs" />
-    <Compile Include="Models\ReportModels\CenturionReportModel.cs" />
-    <Compile Include="Models\ReportModels\ClientReportModel.cs" />
+    <Compile Include="Models\ReportModels\CenturionLog.cs" />
+    <Compile Include="Models\ReportModels\ClientLog.cs" />
     <Compile Include="Models\ReportModels\FullDatabaseModel.cs" />
     <Compile Include="Models\Enums\ReportTypes.cs" />
     <Compile Include="Models\Enums\MonthEnum.cs" />
     <Compile Include="Models\ReportModels\SummedDatabaseModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Forms\SDMForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SDMForm.Designer.cs">
+      <DependentUpon>SDMForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="SDM\ISDM.cs" />
     <Compile Include="SDM\SDM.cs" />
     <Compile Include="Utilities\DataConverter\DataConverter.cs" />
     <Compile Include="Utilities\DataConverter\IDataConverter.cs" />
     <Compile Include="Utilities\DataImporter\DataImporter.cs" />
     <Compile Include="Utilities\DataImporter\IDataImporter.cs" />
+    <Compile Include="Utilities\Calculators\FullReportCalculator\FullReportCalculator.cs" />
+    <Compile Include="Utilities\Calculators\FullReportCalculator\IFullReportCalculator.cs" />
     <Compile Include="Utilities\ReportRetriever\IReportRetriever.cs" />
     <Compile Include="Utilities\ReportRetriever\ReportRetriever.cs" />
+    <Compile Include="Utilities\Calculators\SummedReportCalculator\ISummedReportCalculator.cs" />
+    <Compile Include="Utilities\Calculators\SummedReportCalculator\SummedReportCalculator.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form2.resx">
-      <DependentUpon>Form2.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ContentForms\ImportForms\ImportCenturionForm.resx">
+      <DependentUpon>ImportCenturionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ContentForms\ImportForms\ImportClientForm.resx">
+      <DependentUpon>ImportClientForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ContentForms\ImportForms\ImportLatencyForm.resx">
+      <DependentUpon>ImportLatencyForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ContentForms\ExportMenuForms\FullExportMenu.resx">
+      <DependentUpon>FullExportMenu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ContentForms\ExportMenuForms\SummedExportMenu.resx">
+      <DependentUpon>SummedExportMenu.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -102,6 +150,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Forms\SDMForm.resx">
+      <DependentUpon>SDMForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -1,28 +1,31 @@
-﻿using System.Collections.Generic;
-using SDM.Models.Enums;
-using SDM.Models.LatencyConversionModel;
-using SDM.Models.ReportModels;
+using System.Collections.Generic;
 
 namespace SDM.DAL.FileSystemController
 {
     public interface IFileSystemController
     {
-        List<ClientReportModel> ReadClientLogs(LatencyConversionModel latencyConversionModel);
+        string GetSaveDialogFilePath();
 
-        List<CenturionReportModel> ReadCenturionLogs();
+        string GetOpenDialogFilePath(string limitToDirectory = null);
 
-        void LogData(ReportTypes reportType, string clientId = null);
+        string GetDirectoryPath();
 
-        void WriteToFile(List<string> data);
+        List<string> ReadFileContents(string path);
 
-        void WriteToFile(FullDatabaseModel data);
+        List<string> GetFileNamesInDirectory(string path);
 
-        void WriteToFile(SummedDatabaseModel data);
+        void WriteDataToFile(string path, List<string> data);
 
-        void DeleteReport(ReportTypes reportType);
+        void CopyFile(string originFilePath, string newFilePath);
 
-        void ImportLatencyConversionTable();
+        void CreateFile(string path);
 
-        LatencyConversionModel ReadLatencyConversionTable();
+        void CreateDirectory(string path);
+
+        void DeleteFile(string path);
+
+        void DeleteDirectory(string path);
+        List<string> GetAllFileNamesInDirectory(string path);
+        void AppendClientId(string path, string id);
     }
 }

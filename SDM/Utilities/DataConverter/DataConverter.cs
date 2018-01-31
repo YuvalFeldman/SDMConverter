@@ -80,18 +80,18 @@ namespace SDM.Utilities.DataConverter
             return csvsByPartner;
         }
 
-        public ClientReportModel ConvertCsvToClientDataModel(List<string> data, LatencyConversionModel latencyConversionModel)
+        public ClientLog ConvertCsvToClientDataModel(List<string> data, LatencyConversionModel latencyConversionModel)
         {
             if (data == null || !data.Any())
             {
-                return new ClientReportModel();
+                return new ClientLog();
             }
             if (latencyConversionModel == null)
             {
                 latencyConversionModel = new LatencyConversionModel();
                 
             }
-            var clientReport = new ClientReportModel();
+            var clientReport = new ClientLog();
             data.RemoveAt(0);
             clientReport.ClientReport = data
                 .Select(line => LineSplitter(line).ToArray())
@@ -147,13 +147,13 @@ namespace SDM.Utilities.DataConverter
             }
         }
 
-        public CenturionReportModel ConvertCsvToCenturionModel(List<string> data)
+        public CenturionLog ConvertCsvToCenturionModel(List<string> data)
         {
             if (data == null || !data.Any())
             {
-                return new CenturionReportModel();
+                return new CenturionLog();
             }
-            var centurionReport = new CenturionReportModel();
+            var centurionReport = new CenturionLog();
             data.RemoveAt(0);
             centurionReport.CenturionReport = data
                 .Select(line => LineSplitter(line).ToArray())

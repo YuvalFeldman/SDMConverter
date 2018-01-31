@@ -73,7 +73,7 @@ namespace SDM.Utilities.ReportRetriever
             return summedDatabase;
         }
 
-        public FullDatabaseModel GetFullDebtReport(List<ClientReportModel> clientReportModels, List<CenturionReportModel> centurionReportModels)
+        public FullDatabaseModel GetFullDebtReport(List<ClientLog> clientReportModels, List<CenturionLog> centurionReportModels)
         {
             var fullDatabase = new FullDatabaseModel();
             _dataImporter.UpdateDatabase(fullDatabase, clientReportModels);
@@ -82,7 +82,7 @@ namespace SDM.Utilities.ReportRetriever
             return fullDatabase;
         }
 
-        public void GetInvoiceNumberIssues(List<ClientReportModel> clientReportModels, List<CenturionReportModel> centurionReportModels)
+        public void GetInvoiceNumberIssues(List<ClientLog> clientReportModels, List<CenturionLog> centurionReportModels)
         {
             var fullDatabase = new FullDatabaseModel();
             _dataImporter.UpdateDatabase(fullDatabase, clientReportModels);

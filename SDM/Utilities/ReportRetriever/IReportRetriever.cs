@@ -5,10 +5,10 @@ namespace SDM.Utilities.ReportRetriever
 {
     public interface IReportRetriever
     {
-        FullDatabaseModel GetFullDebtReport(List<ClientReportModel> clientReportModels, List<CenturionReportModel> centurionReportModels);
+        FullDatabaseModel GetFullDebtReport(List<ClientLog> clientReportModels, List<CenturionLog> centurionReportModels);
 
         SummedDatabaseModel GetSummedDebtReport(FullDatabaseModel fullDatabaseModel);
 
-        void GetInvoiceNumberIssues(List<ClientReportModel> clientReportModels, List<CenturionReportModel> centurionReportModels);
+        void GetInvoiceNumberIssues(List<ClientLog> clientReportModels, List<CenturionLog> centurionReportModels);
     }
 }

@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SDM.DAL.FileSystemController;
+using SDM.DAL.ReportsDal;
 using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.DataImporter
 {
     public class DataImporter : IDataImporter
     {
-        private readonly IFileSystemController _fileSystemController;
+        private readonly IReportsDal _reportsDal;
 
-        public DataImporter(IFileSystemController fileSystemController)
+        public DataImporter(IReportsDal reportsDal)
         {
-            _fileSystemController = fileSystemController;
+            _reportsDal = reportsDal;
         }
 
-        public void UpdateDatabase(FullDatabaseModel fullDatabase, List<ClientReportModel> data)
+        public void UpdateDatabase(FullDatabaseModel fullDatabase, List<ClientLog> data)
         {
             if (!data.Any())
             {
@@ -50,7 +50,7 @@ namespace SDM.Utilities.DataImporter
             }
         }
 
-        public void UpdateDatabase(FullDatabaseModel fullDatabase, List<CenturionReportModel> data)
+        public void UpdateDatabase(FullDatabaseModel fullDatabase, List<CenturionLog> data)
         {
             if (!data.Any())
             {
@@ -91,7 +91,7 @@ namespace SDM.Utilities.DataImporter
             }
         }
 
-        public void OutputInvoiceNumberIssues(FullDatabaseModel fullDatabase, List<CenturionReportModel> data)
+        public void OutputInvoiceNumberIssues(FullDatabaseModel fullDatabase, List<CenturionLog> data)
         {
             if (!data.Any())
             {
@@ -124,7 +124,7 @@ namespace SDM.Utilities.DataImporter
             {
                 MessageBox.Show("Found centurion reports with invoice numbers that did not match any client report invoice numbers, exporting to error file", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                _fileSystemController.WriteToFile(centurionDataWithNewInvoiceNumbers);
+                _reportsDal.WriteToFile(centurionDataWithNewInvoiceNumbers);
             }
             else
             {

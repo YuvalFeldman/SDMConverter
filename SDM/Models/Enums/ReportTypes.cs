@@ -3,6 +3,7 @@
     public enum ReportTypes
     {
         ClientReport,
-        CenturionReport
+        CenturionReport,
+        LatencyConversionTable
     }
 }

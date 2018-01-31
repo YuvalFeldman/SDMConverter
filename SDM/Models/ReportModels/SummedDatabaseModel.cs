@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using SDM.Models.Enums;
 
 namespace SDM.Models.ReportModels
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using SDM.DAL.FileSystemController;
+using SDM.DAL.ReportsDal;
 using SDM.Models.Enums;
 using SDM.Models.LatencyConversionModel;
 using SDM.Utilities.ReportRetriever;
@@ -9,12 +9,12 @@ namespace SDM.SDM
 {
     public class SDM : ISDM
     {
-        private readonly IFileSystemController _fileSystemController;
+        private readonly IReportsDal _reportsDal;
         private readonly IReportRetriever _reportRetriever;
 
-        public SDM(IFileSystemController fileSystemController, IReportRetriever reportRetriever)
+        public SDM(IReportsDal reportsDal, IReportRetriever reportRetriever)
         {
-            _fileSystemController = fileSystemController;
+            _reportsDal = reportsDal;
             _reportRetriever = reportRetriever;
         }
 
@@ -22,7 +22,7 @@ namespace SDM.SDM
         {
             try
             {
-                _fileSystemController.LogData(ReportTypes.ClientReport, clientId);
+                _reportsDal.LogData(ReportTypes.ClientReport, clientId);
             }
             catch (Exception e)
             {
@@ -35,7 +35,7 @@ namespace SDM.SDM
         {
             try
             {
-                _fileSystemController.LogData(ReportTypes.CenturionReport);
+                _reportsDal.LogData(ReportTypes.CenturionReport);
             }
             catch (Exception e)
             {
@@ -47,11 +47,12 @@ namespace SDM.SDM
         {
             try
             {
-                var latencyConversionModel = useConversionTable ? _fileSystemController.ReadLatencyConversionTable() : new LatencyConversionModel();
-                var clientModels = _fileSystemController.ReadClientLogs(latencyConversionModel);
-                var centurionModels = _fileSystemController.ReadCenturionLogs();
+                var latencyConversionModel = useConversionTable ? _reportsDal.ReadLatencyConversionTable() : new LatencyConversionModel();
+                var clientModels = _reportsDal.ReadClientLogs(latencyConversionModel);
+                var centurionModels = _reportsDal.ReadCenturionLogs();
                 var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
-                _fileSystemController.WriteToFile(fullDeptReport);
+                return;
+                //_reportsDal.WriteToFile(fullDeptReport);
             }
             catch (Exception e)
             {
@@ -63,14 +64,14 @@ namespace SDM.SDM
         {
             try
             {
-                var latencyConversionModel = useConversionTable ? _fileSystemController.ReadLatencyConversionTable() : new LatencyConversionModel();
-                var clientModels = _fileSystemController.ReadClientLogs(latencyConversionModel);
-                var centurionModels = _fileSystemController.ReadCenturionLogs();
+                var latencyConversionModel = useConversionTable ? _reportsDal.ReadLatencyConversionTable() : new LatencyConversionModel();
+                var clientModels = _reportsDal.ReadClientLogs(latencyConversionModel);
+                var centurionModels = _reportsDal.ReadCenturionLogs();
                 var fullDeptReport = _reportRetriever.GetFullDebtReport(clientModels, centurionModels);
 
                 var summedDeptReport = _reportRetriever.GetSummedDebtReport(fullDeptReport);
 
-                _fileSystemController.WriteToFile(summedDeptReport);
+                _reportsDal.WriteToFile(summedDeptReport);
             }
             catch (Exception e)
             {
@@ -82,7 +83,7 @@ namespace SDM.SDM
         {
             try
             {
-                _fileSystemController.DeleteReport(ReportTypes.ClientReport);
+                _reportsDal.DeleteReport(ReportTypes.ClientReport);
             }
             catch (Exception e)
             {
@@ -94,7 +95,7 @@ namespace SDM.SDM
         {
             try
             {
-                _fileSystemController.DeleteReport(ReportTypes.CenturionReport);
+                _reportsDal.DeleteReport(ReportTypes.CenturionReport);
             }
             catch (Exception e)
             {
@@ -106,7 +107,7 @@ namespace SDM.SDM
         {
             try
             {
-                _fileSystemController.ImportLatencyConversionTable();
+                _reportsDal.ImportLatencyConversionTable();
             }
             catch (Exception e)
             {
@@ -118,9 +119,9 @@ namespace SDM.SDM
         {
             try
             {
-                var latencyConversionModel = useConversionTable ? _fileSystemController.ReadLatencyConversionTable() : new LatencyConversionModel();
-                var clientModels = _fileSystemController.ReadClientLogs(latencyConversionModel);
-                var centurionModels = _fileSystemController.ReadCenturionLogs();
+                var latencyConversionModel = useConversionTable ? _reportsDal.ReadLatencyConversionTable() : new LatencyConversionModel();
+                var clientModels = _reportsDal.ReadClientLogs(latencyConversionModel);
+                var centurionModels = _reportsDal.ReadCenturionLogs();
                 _reportRetriever.GetInvoiceNumberIssues(clientModels, centurionModels);
             }
             catch (Exception e)
