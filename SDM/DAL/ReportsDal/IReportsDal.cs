@@ -7,22 +7,26 @@ namespace SDM.DAL.ReportsDal
 {
     public interface IReportsDal
     {
-        List<ClientLog> ReadClientLogs(LatencyConversionModel latencyConversionModel);
+        void ExportReport(List<string> report);
+        void ExportReports(Dictionary<string, List<string>> reports);
 
-        List<CenturionLog> ReadCenturionLogs();
 
-        void LogData(ReportTypes reportType, string clientId = null);
+        //List<ClientLog> ReadClientLogs(LatencyConversionModel latencyConversionModel);
 
-        void WriteToFile(List<string> data);
+        //List<CenturionLog> ReadCenturionLogs();
 
-        void WriteToFile(FullDatabaseModel data);
+        //void LogData(ReportTypes reportType, string clientId = null);
 
-        void WriteToFile(SummedDatabaseModel data);
+        //void WriteToFile(List<string> data);
 
-        void DeleteReport(ReportTypes reportType);
+        //void WriteToFile(FullDatabaseModel data);
 
-        void ImportLatencyConversionTable();
+        //void WriteToFile(SummedDatabaseModel data);
 
-        LatencyConversionModel ReadLatencyConversionTable();
+        //void DeleteReport(ReportTypes reportType);
+
+        //void ImportLatencyConversionTable();
+
+        //LatencyConversionModel ReadLatencyConversionTable();
     }
 }

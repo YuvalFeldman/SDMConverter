@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.ExportFullReportButton = new System.Windows.Forms.Button();
-            this.LatencyConversionTableCheckbox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // ExportFullReportButton
@@ -41,33 +40,20 @@
             this.ExportFullReportButton.Text = "Export report";
             this.ExportFullReportButton.UseVisualStyleBackColor = true;
             // 
-            // LatencyConversionTableCheckbox
-            // 
-            this.LatencyConversionTableCheckbox.AutoSize = true;
-            this.LatencyConversionTableCheckbox.Location = new System.Drawing.Point(95, 5);
-            this.LatencyConversionTableCheckbox.Name = "LatencyConversionTableCheckbox";
-            this.LatencyConversionTableCheckbox.Size = new System.Drawing.Size(163, 17);
-            this.LatencyConversionTableCheckbox.TabIndex = 24;
-            this.LatencyConversionTableCheckbox.Text = "Use latency conversion table";
-            this.LatencyConversionTableCheckbox.UseVisualStyleBackColor = true;
-            // 
             // FullExportMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(655, 25);
-            this.Controls.Add(this.LatencyConversionTableCheckbox);
             this.Controls.Add(this.ExportFullReportButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FullExportMenu";
             this.Text = "ExportForm";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Button ExportFullReportButton;
-        private System.Windows.Forms.CheckBox LatencyConversionTableCheckbox;
+        public System.Windows.Forms.Button ExportFullReportButton;
     }
 }

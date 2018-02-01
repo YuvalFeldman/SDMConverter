@@ -95,7 +95,7 @@
         #endregion
 
         private System.Windows.Forms.Button deleteSelectedButton;
-        private System.Windows.Forms.Button updateUsagesButton;
+        public System.Windows.Forms.Button updateUsagesButton;
         private System.Windows.Forms.FlowLayoutPanel FilesContentPanel;
         private System.Windows.Forms.Button ImportLatencyConversionTableButton;
     }

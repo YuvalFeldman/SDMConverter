@@ -76,8 +76,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Button exportSummedReportButton;
-        private System.Windows.Forms.ComboBox summedTablesComboBox;
-        private System.Windows.Forms.Button exportAllReports;
+        public System.Windows.Forms.Button exportSummedReportButton;
+        public System.Windows.Forms.ComboBox summedTablesComboBox;
+        public System.Windows.Forms.Button exportAllReports;
     }
 }

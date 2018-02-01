@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using SDM.DAL.ReportsDal;
 using SDM.Forms.ContentForms.ExportMenuForms;
 using SDM.Forms.ContentForms.ImportForms;
 using SDM.Utilities.Calculators.FullReportCalculator;
@@ -14,6 +15,7 @@ namespace SDM.Forms
     {
         private readonly IFullReportCalculator _fullReportCalculator;
         private readonly ISummedReportCalculator _summedReportCalculator;
+        private readonly IReportsDal _reportsDal;
 
         private readonly FullExportMenu _fullExportMenu;
         private readonly SummedExportMenu _summedExportMenu;
@@ -40,7 +42,7 @@ namespace SDM.Forms
             SummedExportMenu summedExportMenu, 
             ImportCenturionForm importCenturionForm,
             ImportClientForm importClientForm, 
-            ImportLatencyForm importLatencyForm, IFullReportCalculator fullReportCalculator, ISummedReportCalculator summedReportCalculator)
+            ImportLatencyForm importLatencyForm, IFullReportCalculator fullReportCalculator, ISummedReportCalculator summedReportCalculator, IReportsDal reportsDal)
         {
             _fullExportMenu = fullExportMenu;
             _summedExportMenu = summedExportMenu;
@@ -49,6 +51,7 @@ namespace SDM.Forms
             _importLatencyForm = importLatencyForm;
             _fullReportCalculator = fullReportCalculator;
             _summedReportCalculator = summedReportCalculator;
+            _reportsDal = reportsDal;
 
             InitializeComponent();
 
@@ -70,6 +73,26 @@ namespace SDM.Forms
 
             UpdateImportPanel();
             UpdateExportMenuForm();
+
+            _summedExportMenu.summedTablesComboBox.SelectedIndexChanged += new EventHandler(this.ChangedChosenSummedReport);
+            _importCenturionForm.updateUsagesButton.Click += new EventHandler((s, e) =>
+            {
+                GetUpdatedReport();
+                UpdateExcelContentPanel();
+            });
+            _importClientForm.updateUsagesButton.Click += new EventHandler((s, e) =>
+            {
+                GetUpdatedReport();
+                UpdateExcelContentPanel();
+            });
+            _importLatencyForm.updateUsagesButton.Click += new EventHandler((s, e) =>
+            {
+                GetUpdatedReport();
+                UpdateExcelContentPanel();
+            });
+            _fullExportMenu.ExportFullReportButton.Click += new EventHandler(this.ExportSinlgeReport);
+            _summedExportMenu.exportSummedReportButton.Click += new EventHandler(this.ExportSinlgeReport);
+            _summedExportMenu.exportAllReports.Click += new EventHandler(this.ExportAllSummedReports);
         }
 
         private void TopBarMenu_MouseDown(object sender, MouseEventArgs e)
@@ -200,6 +223,27 @@ namespace SDM.Forms
                 _report = _summedReport.Any() ? _summedReport[_summedReport.Keys.First()] : new List<string>();
                 _summedExportMenu.UpdateSummedComboBoxOptions(_summedReport.Keys.ToList());
             }
+        }
+
+        private void ChangedChosenSummedReport(object sender, EventArgs e)
+        {
+            var summedReportsSelectedIndex = _summedExportMenu.summedTablesComboBox.SelectedIndex;
+            if (summedReportsSelectedIndex < 0 || summedReportsSelectedIndex > _summedExportMenu.SummedTables.Count)
+            {
+                return;
+            }
+            _report = _summedReport[_summedExportMenu.SummedTables[summedReportsSelectedIndex]];
+            UpdateExcelContentPanel();
+        }
+
+        private void ExportSinlgeReport(object sender, EventArgs e)
+        {
+            _reportsDal.ExportReport(_report);
+        }
+
+        private void ExportAllSummedReports(object sender, EventArgs e)
+        {
+            _reportsDal.ExportReports(_summedReport);
         }
     }
 }
