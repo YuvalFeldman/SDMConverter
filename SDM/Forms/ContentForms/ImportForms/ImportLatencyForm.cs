@@ -29,11 +29,6 @@ namespace SDM.Forms.ContentForms.ImportForms
             }
         }
 
-        private void updateUsagesButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void deleteSelectedButton_Click(object sender, EventArgs e)
         {
             var logsToDelete = _latencyTables

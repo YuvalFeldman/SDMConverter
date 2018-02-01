@@ -28,11 +28,6 @@ namespace SDM.Forms.ContentForms.ImportForms
             }
         }
 
-        private void updateUsagesButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void deleteSelectedButton_Click(object sender, EventArgs e)
         {
             var logsToDelete = _centurionLogs
@@ -61,7 +56,7 @@ namespace SDM.Forms.ContentForms.ImportForms
 
             foreach (var centurionLog in centurionLogNames)
             {
-                var centurionCheckBox = new CheckBox{Text = centurionLog};
+                var centurionCheckBox = new CheckBox{Text = centurionLog, Checked = true };
                 centurionCheckBox.Show();
                 FilesContentPanel.Controls.Add(centurionCheckBox);
                 _centurionLogs.Add(centurionCheckBox);

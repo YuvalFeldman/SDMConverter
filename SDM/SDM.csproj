@@ -59,12 +59,6 @@
     <Compile Include="DAL\ReportsDal\IReportsDal.cs" />
     <Compile Include="DAL\FileSystemController\FileSystemController.cs" />
     <Compile Include="DAL\FileSystemController\IFileSystemController.cs" />
-    <Compile Include="Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\ContentForms\ImportForms\ImportCenturionForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,8 +104,6 @@
     <Compile Include="Forms\SDMForm.Designer.cs">
       <DependentUpon>SDMForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SDM\ISDM.cs" />
-    <Compile Include="SDM\SDM.cs" />
     <Compile Include="Utilities\Calculators\IssuesReportCalculator\IIssuesReportCalculator.cs" />
     <Compile Include="Utilities\Calculators\IssuesReportCalculator\IssuesReportCalculator.cs" />
     <Compile Include="Utilities\DataConverter\DataConverter.cs" />
@@ -120,9 +112,6 @@
     <Compile Include="Utilities\Calculators\FullReportCalculator\IFullReportCalculator.cs" />
     <Compile Include="Utilities\Calculators\SummedReportCalculator\ISummedReportCalculator.cs" />
     <Compile Include="Utilities\Calculators\SummedReportCalculator\SummedReportCalculator.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ContentForms\ImportForms\ImportCenturionForm.resx">
       <DependentUpon>ImportCenturionForm.cs</DependentUpon>
     </EmbeddedResource>

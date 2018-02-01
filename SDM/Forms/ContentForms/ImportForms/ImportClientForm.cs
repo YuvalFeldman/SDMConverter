@@ -22,17 +22,17 @@ namespace SDM.Forms.ContentForms.ImportForms
 
         private void ImportClientReportButton_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(ClientIdTextBox.Text))
+            {
+                MessageBox.Show(@"Client id value cannot be empty");
+                return;
+            }
             var reportName = _logsDal.ImportReport(ReportTypes.ClientReport);
             if (!string.IsNullOrEmpty(reportName))
             {
                 _logsDal.AddClientIdToClientReport(reportName, ClientIdTextBox.Text);
                 UpdateFilesContentPanel();
             }
-        }
-
-        private void updateUsagesButton_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void deleteSelectedButton_Click(object sender, EventArgs e)
@@ -61,7 +61,7 @@ namespace SDM.Forms.ContentForms.ImportForms
 
             foreach (var clientLog in clientLogNames)
             {
-                var clientCheckBox = new CheckBox { Text = clientLog };
+                var clientCheckBox = new CheckBox { Text = clientLog, Checked = true};
                 clientCheckBox.Show();
                 FilesContentPanel.Controls.Add(clientCheckBox);
                 _clientLogs.Add(clientCheckBox);

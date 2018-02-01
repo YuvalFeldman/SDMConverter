@@ -1,4 +1,6 @@
-﻿namespace SDM.Forms
+﻿using System.Windows.Forms;
+
+namespace SDM.Forms
 {
     partial class SdmForm
     {
@@ -37,6 +39,8 @@
             this.ImportTypeComboBox = new System.Windows.Forms.ComboBox();
             this.ImportPanel = new System.Windows.Forms.Panel();
             this.ExcelContentPanel = new System.Windows.Forms.DataGridView();
+            this.importLabel = new System.Windows.Forms.Label();
+            this.exportLabel = new System.Windows.Forms.Label();
             this.TopBarMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ExcelContentPanel)).BeginInit();
             this.SuspendLayout();
@@ -122,7 +126,7 @@
             // 
             // ImportPanel
             // 
-            this.ImportPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.ImportPanel.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.ImportPanel.Location = new System.Drawing.Point(12, 87);
             this.ImportPanel.Name = "ImportPanel";
             this.ImportPanel.Size = new System.Drawing.Size(188, 451);
@@ -132,18 +136,39 @@
             // 
             this.ExcelContentPanel.AllowUserToAddRows = false;
             this.ExcelContentPanel.AllowUserToDeleteRows = false;
-            this.ExcelContentPanel.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
             this.ExcelContentPanel.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ExcelContentPanel.Location = new System.Drawing.Point(206, 86);
             this.ExcelContentPanel.Name = "ExcelContentPanel";
             this.ExcelContentPanel.Size = new System.Drawing.Size(782, 452);
             this.ExcelContentPanel.TabIndex = 24;
             // 
+            // importLabel
+            // 
+            this.importLabel.AutoSize = true;
+            this.importLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.importLabel.Location = new System.Drawing.Point(7, 31);
+            this.importLabel.Name = "importLabel";
+            this.importLabel.Size = new System.Drawing.Size(71, 25);
+            this.importLabel.TabIndex = 0;
+            this.importLabel.Text = "Import";
+            // 
+            // exportLabel
+            // 
+            this.exportLabel.AutoSize = true;
+            this.exportLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exportLabel.Location = new System.Drawing.Point(201, 31);
+            this.exportLabel.Name = "exportLabel";
+            this.exportLabel.Size = new System.Drawing.Size(74, 25);
+            this.exportLabel.TabIndex = 25;
+            this.exportLabel.Text = "Export";
+            // 
             // SdmForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1000, 550);
+            this.Controls.Add(this.exportLabel);
+            this.Controls.Add(this.importLabel);
             this.Controls.Add(this.ExcelContentPanel);
             this.Controls.Add(this.ImportPanel);
             this.Controls.Add(this.ImportTypeComboBox);
@@ -157,6 +182,7 @@
             this.TopBarMenu.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ExcelContentPanel)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -171,5 +197,7 @@
         private System.Windows.Forms.ComboBox ImportTypeComboBox;
         private System.Windows.Forms.Panel ImportPanel;
         private System.Windows.Forms.DataGridView ExcelContentPanel;
+        private Label importLabel;
+        private Label exportLabel;
     }
 }

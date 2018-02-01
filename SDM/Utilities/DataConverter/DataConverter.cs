@@ -24,102 +24,126 @@ namespace SDM.Utilities.DataConverter
 
         public List<string> ConvertToCsv(FullDatabaseModel data)
         {
-            if (data == null || !data.FullDatabase.Any())
+            try
             {
-                return new List<string>();
-            }
-            var csvData = new List<string>();
+                if (data == null || !data.FullDatabase.Any())
+                {
+                    return new List<string>();
+                }
+                var csvData = new List<string>();
 
-            var header = $"{ClientId},{InvoiceNumber},{PaymentDue},{PaymentDueDate}";
-            var payments = Math.Ceiling((double)data.FullDatabase.Max(row => row.Payments.Count) / 3);
-            for (var i = 1; i <= payments; i++)
+                var header = $"{ClientId},{InvoiceNumber},{PaymentDue},{PaymentDueDate}";
+                var payments = Math.Ceiling((double)data.FullDatabase.Max(row => row.Payments.Count) / 3);
+                for (var i = 1; i <= payments; i++)
+                {
+                    header = $"{header},{PaymentDate}{i},{PaymentPaid}{i},{Latency}{i}";
+                }
+                csvData.Add(header);
+                csvData.AddRange(
+                    from databaseRow
+                    in data.FullDatabase
+                    let databaseRowString = $"{databaseRow.ClientId},{databaseRow.InvoiceNumber},{databaseRow.PaymentDue},{databaseRow.PaymentDueDate.Day}.{databaseRow.PaymentDueDate.Month}.{databaseRow.PaymentDueDate.Year}"
+                    select databaseRow.Payments
+                        .Aggregate(databaseRowString, (current, paymentDateLatencyPaid) => $"{current},{paymentDateLatencyPaid.PaymentDate.Day}.{paymentDateLatencyPaid.PaymentDate.Month}.{paymentDateLatencyPaid.PaymentDate.Year},{paymentDateLatencyPaid.PaymentPaid},{paymentDateLatencyPaid.Latency}"));
+
+                return csvData;
+            }
+            catch (Exception e)
             {
-                header = $"{header},{PaymentDate}{i},{PaymentPaid}{i},{Latency}{i}";
+                MessageBox.Show($@"Failed converting full report to csv. InnerMessage: {e.Message}");
+                throw;
             }
-            csvData.Add(header);
-            csvData.AddRange(
-                from databaseRow 
-                in data.FullDatabase
-                let databaseRowString = $"{databaseRow.ClientId},{databaseRow.InvoiceNumber},{databaseRow.PaymentDue},{databaseRow.PaymentDueDate.Day}.{databaseRow.PaymentDueDate.Month}.{databaseRow.PaymentDueDate.Year}"
-                select databaseRow.Payments
-                .Aggregate(databaseRowString, (current, paymentDateLatencyPaid) => $"{current},{paymentDateLatencyPaid.PaymentDate.Day}.{paymentDateLatencyPaid.PaymentDate.Month}.{paymentDateLatencyPaid.PaymentDate.Year},{paymentDateLatencyPaid.PaymentPaid},{paymentDateLatencyPaid.Latency}"));
-
-            return csvData;
         }
 
-        public Dictionary<string, List<string>> ConvertToCsv(SummedDatabaseModel data)
+        public Dictionary<string, List<string>> ConvertToCsv(SummedDatabaseModel summedDatabaseModel)
         {
-            if (data == null || !data.SummedDatabase.Any())
+            try
             {
-                return new Dictionary<string, List<string>>();
-            }
-            var csvsByPartner = new Dictionary<string, List<string>>();
-            foreach (var summedDatabasePartner in data.SummedDatabase)
-            {
-                var csvData = new List<string>{$"{InvoiceNumber},{PaymentDue},{PaymentPaid},{LateBelow30},{LateBelow60},{LateBelow90},{LateAbove90}"};
-
-                var sortedDates = summedDatabasePartner
-                    .Value
-                    .SummedDbPerDate
-                    .Keys
-                    .ToList()
-                    .OrderBy(element => element.Date);
-
-                foreach (var partnerDate in sortedDates)
+                if (summedDatabaseModel == null || !summedDatabaseModel.SummedDatabase.Any())
                 {
-                    var currentDateData = summedDatabasePartner.Value.SummedDbPerDate[partnerDate];
-
-                    csvData.Add($"{partnerDate.Month}-{partnerDate.Year}");
-                    csvData.AddRange(currentDateData.Select(summedDatabaseRow => $"{summedDatabaseRow.InvoiceNumber},{summedDatabaseRow.PaymentDue},{summedDatabaseRow.PaymentPaid},{summedDatabaseRow.PaidBelow30},{summedDatabaseRow.PaidOver30Below60},{summedDatabaseRow.PaidOver60Below90},{summedDatabaseRow.PaidOver90}"));
-                    csvData.Add($"total due: {currentDateData.Sum(payments => payments.PaymentDue)}, total paid: {currentDateData.Sum(payments => payments.PaymentPaid)}");
+                    return new Dictionary<string, List<string>>();
                 }
 
-                csvsByPartner.Add(summedDatabasePartner.Key, csvData);
+                return summedDatabaseModel
+                    .SummedDatabase
+                    .ToDictionary(k => k.Key, v => GetSummedDbPartnerCsv(v.Key, v.Value));
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed converting summed report to csv. InnerMessage: {e.Message}");
+                throw;
+            }
+        }
+
+        private List<string> GetSummedDbPartnerCsv(string client, SummedDatabasePartner summedDatabasePartner)
+        {
+            var summedPartnerReportCsv = new List<string>();
+            summedPartnerReportCsv.Add($"{InvoiceNumber},{PaymentDue},{PaymentPaid},{LateBelow30},{LateBelow60},{LateBelow90},{LateAbove90}");
+            summedPartnerReportCsv.Add(client);
+
+            foreach (var yearlySummedData in summedDatabasePartner.YearlySummedDbData.OrderByDescending(k => k.Key))
+            {
+                foreach (var monthlySummedData in yearlySummedData.Value.MonthlySummedDbData.OrderByDescending(k => k.Key))
+                {
+                    summedPartnerReportCsv.Add($"{monthlySummedData.Key}-{yearlySummedData.Key}");
+                    summedPartnerReportCsv.AddRange(monthlySummedData.Value.Select(monthlyRow => $"{monthlyRow.InvoiceNumber},{monthlyRow.PaymentDue},{monthlyRow.PaymentPaid},{monthlyRow.PaidBelow30},{monthlyRow.PaidOver30Below60},{monthlyRow.PaidOver60Below90},{monthlyRow.PaidOver90}"));
+                    summedPartnerReportCsv.Add($"total due: {monthlySummedData.Value.Sum(payments => payments.PaymentDue)}, total paid: {monthlySummedData.Value.Sum(payments => payments.PaymentPaid)}");
+                    summedPartnerReportCsv.Add(string.Empty);
+                }
+                summedPartnerReportCsv.Add(string.Empty);
             }
 
-            return csvsByPartner;
+            return summedPartnerReportCsv;
         }
 
         public ClientLog ConvertCsvToClientDataModel(List<string> data, LatencyConversionModel latencyConversionModel)
         {
-            if (data == null || !data.Any())
+            try
             {
-                return new ClientLog();
-            }
-            if (latencyConversionModel == null)
-            {
-                latencyConversionModel = new LatencyConversionModel();
-                
-            }
-            var clientReport = new ClientLog();
-            data.RemoveAt(0);
-            clientReport.ClientReport = data
-                .Select(line => LineSplitter(line).ToArray())
-                .Select(lineParams =>
+                if (data == null || !data.Any())
                 {
-                    try
-                    {
-                        var row = new ClientModelRow();
-                        row.InvoiceNumber = latencyConversionModel.LatencyConversionTable.ContainsKey(lineParams[20]) &&
-                                            latencyConversionModel.LatencyConversionTable[lineParams[20]].ContainsKey(int.Parse(lineParams[15])) ?
-                            latencyConversionModel.LatencyConversionTable[lineParams[20]][int.Parse(lineParams[15])] :
-                            int.Parse(lineParams[15]);
-                        row.InvoiceDate = TryParsingDateTime(lineParams[19], true);
-                        row.AmountDue = float.Parse(lineParams[16]);
-                        row.PaymentTerms = int.Parse(lineParams[14]);
-                        row.ClientId = lineParams[20];
-                        return row;
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show($"Error parsing content from client file in row: {string.Join(",", lineParams)}. Excpetion: {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return null;
-                    }
-                })
-                .Where(x => x != null)
-                .ToList();
+                    return new ClientLog();
+                }
+                if (latencyConversionModel == null)
+                {
+                    latencyConversionModel = new LatencyConversionModel();
 
-            return clientReport;
+                }
+                var clientReport = new ClientLog();
+                data.RemoveAt(0);
+                clientReport.ClientReport = data
+                    .Select(line => LineSplitter(line).ToArray())
+                    .Select(lineParams =>
+                    {
+                        try
+                        {
+                            var row = new ClientModelRow();
+                            row.InvoiceNumber = latencyConversionModel.LatencyConversionTable.ContainsKey(lineParams[20]) &&
+                                                latencyConversionModel.LatencyConversionTable[lineParams[20]].ContainsKey(int.Parse(lineParams[15])) ?
+                                latencyConversionModel.LatencyConversionTable[lineParams[20]][int.Parse(lineParams[15])] :
+                                int.Parse(lineParams[15]);
+                            row.InvoiceDate = TryParsingDateTime(lineParams[19], true);
+                            row.AmountDue = float.Parse(lineParams[16]);
+                            row.PaymentTerms = int.Parse(lineParams[14]);
+                            row.ClientId = lineParams[20];
+                            return row;
+                        }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show($"Error parsing content from client file in row: {string.Join(",", lineParams)}. Excpetion: {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return null;
+                        }
+                    })
+                    .Where(x => x != null)
+                    .ToList();
+
+                return clientReport;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed parsing client report. InnerMessage: {e.Message}");
+                throw;
+            }
         }
 
         private DateTime TryParsingDateTime(string date, bool dateTimeEu)
@@ -182,28 +206,36 @@ namespace SDM.Utilities.DataConverter
 
         public LatencyConversionModel ConvertCsvToLatencyConversionModel(List<string> data)
         {
-            if (data == null || !data.Any())
+            try
             {
-                return new LatencyConversionModel();
-            }
-            var latencyConversionModel = new LatencyConversionModel();
-            var conversionHeader = LineSplitter(data[0]).ToList();
-            data.RemoveAt(0);
-
-            foreach (var latencyRow in data)
-            {
-                var splitRow = LineSplitter(latencyRow).ToList();
-                var clientId = splitRow[0];
-                var conversionRow = new Dictionary<int, int>();
-                for (var i = 1; i < conversionHeader.Count; i++)
+                if (data == null || !data.Any())
                 {
-                    conversionRow.Add(int.Parse(conversionHeader[i]), int.Parse(splitRow[i]));
+                    return new LatencyConversionModel();
+                }
+                var latencyConversionModel = new LatencyConversionModel();
+                var conversionHeader = LineSplitter(data[0]).ToList();
+                data.RemoveAt(0);
+
+                foreach (var latencyRow in data)
+                {
+                    var splitRow = LineSplitter(latencyRow).ToList();
+                    var clientId = splitRow[0];
+                    var conversionRow = new Dictionary<int, int>();
+                    for (var i = 1; i < conversionHeader.Count; i++)
+                    {
+                        conversionRow.Add(int.Parse(conversionHeader[i]), int.Parse(splitRow[i]));
+                    }
+
+                    latencyConversionModel.LatencyConversionTable.Add(clientId, conversionRow);
                 }
 
-                latencyConversionModel.LatencyConversionTable.Add(clientId, conversionRow);
+                return latencyConversionModel;
             }
-
-            return latencyConversionModel;
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed parsing latency conversion table. InnerMessage: {e.Message}");
+                throw;
+            }
         }
 
         IEnumerable<string> LineSplitter(string line)

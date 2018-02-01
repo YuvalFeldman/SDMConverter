@@ -49,95 +49,129 @@ namespace SDM.DAL.FileSystemController
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error reading file data, file: {path}", ex);
+                MessageBox.Show($@"Error reading file data, file: {path}. InnerMessage: {ex.Message}");
+                throw;
             }
         }
 
         public void WriteDataToFile(string path, List<string> data)
         {
-            CreateFile(path);
-            File.WriteAllLines(path, data, Encoding.GetEncoding("windows-1255"));
+            try
+            {
+                CreateFile(path);
+                File.WriteAllLines(path, data, Encoding.GetEncoding("windows-1255"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($@"Failed writing data to file, file: {path}. InnerMessage: {ex.Message}");
+            }
         }
 
         public void CreateFile(string path)
         {
-            CreateDirectory(Path.GetDirectoryName(path));
-
-            if (!string.IsNullOrEmpty(path) && !File.Exists(path))
+            try
             {
-                var file = File.Create(path);
-                file.Close();
+                CreateDirectory(Path.GetDirectoryName(path));
+
+                if (!string.IsNullOrEmpty(path) && !File.Exists(path))
+                {
+                    var file = File.Create(path);
+                    file.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed Creating File, file: {path}. InnerMessage: {e.Message}");
+                throw;
             }
         }
 
         public void CreateDirectory(string path)
         {
-            if (string.IsNullOrEmpty(path))
+            try
             {
-                return;
+                if (string.IsNullOrEmpty(path))
+                {
+                    return;
+                }
+                var fullPath = Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(fullPath) && !Directory.Exists(fullPath))
+                {
+                    Directory.CreateDirectory(fullPath);
+                }
             }
-            var fullPath = Path.GetDirectoryName(path);
-            if (!string.IsNullOrEmpty(fullPath) && !Directory.Exists(fullPath))
+            catch (Exception e)
             {
-                Directory.CreateDirectory(fullPath);
+                MessageBox.Show($@"Failed creating directory, directory: {path}. InnerMessage: {e.Message}");
+                throw;
             }
         }
 
         public void DeleteFile(string path)
         {
-            if (!string.IsNullOrEmpty(path) && File.Exists(path))
+            try
             {
-                File.Delete(path);
+                if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                {
+                    File.Delete(path);
+                }
             }
-        }
-
-        public void DeleteDirectory(string path)
-        {
-            if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+            catch (Exception e)
             {
-                Directory.Delete(path, true);
+                MessageBox.Show($@"Failed Deleting file, file: {path}. InnerMessage: {e.Message}");
             }
         }
 
         public List<string> GetAllFileNamesInDirectory(string path)
         {
-            if (!Directory.Exists(path))
+            try
             {
-                return new List<string>();
-            }
+                if (!Directory.Exists(path))
+                {
+                    return new List<string>();
+                }
 
-            var filesInDirectory = Directory.GetFiles(path);
-            return filesInDirectory.ToList();
+                var filesInDirectory = Directory.GetFiles(path);
+                return filesInDirectory.ToList();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed geting file names from directory, directory: {path}. InnerMessage: {e.Message}");
+                throw;
+            }
         }
 
         public void AppendClientId(string path, string id)
         {
-            if (!File.Exists(path))
+            try
             {
-                return;
-            }
-
-            var updatedContent = new List<string>();
-            var fileContent = ReadFileContents(path);
-            var first = true;
-            foreach (var line in fileContent)
-            {
-                if (first)
+                if (!File.Exists(path))
                 {
-                    first = false;
-                    updatedContent.Add($"{line},client id");
-                    continue;
+                    return;
                 }
 
-                updatedContent.Add($"{line},{id}");
+                var updatedContent = new List<string>();
+                var fileContent = ReadFileContents(path);
+                var first = true;
+                foreach (var line in fileContent)
+                {
+                    if (first)
+                    {
+                        first = false;
+                        updatedContent.Add($"{line},client id");
+                        continue;
+                    }
+
+                    updatedContent.Add($"{line},{id}");
+                }
+
+                WriteDataToFile(path, updatedContent);
             }
-
-            WriteDataToFile(path, updatedContent);
-        }
-
-        public List<string> GetFileNamesInDirectory(string path)
-        {
-            return string.IsNullOrEmpty(path) && !File.Exists(path) ? new List<string>() : Directory.GetFiles(path, "*.csv").Select(Path.GetFileName).ToList();
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed adding client id to report: {path}, id: {id}. InnerMessage: {e.Message}");
+                throw;
+            }
         }
 
         public void CopyFile(string originFilePath, string newFilePath)
@@ -150,12 +184,6 @@ namespace SDM.DAL.FileSystemController
             {
                 Directory.CreateDirectory(newFilePath);
             }
-            //if (!File.Exists(newFilePath))
-            //{
-            //    File.Create(newFilePath);
-            //}
-            //var content = ReadFileContents(originFilePath);
-            //WriteDataToFile(newFilePath, content);
             File.Copy(originFilePath, newFilePath, true);
         }
 
@@ -164,18 +192,8 @@ namespace SDM.DAL.FileSystemController
             return _saveFileDialog.ShowDialog() != DialogResult.OK ? null : _saveFileDialog.FileName;
         }
 
-        public string GetOpenDialogFilePath(string limitToDirectory = null)
+        public string GetOpenDialogFilePath()
         {
-            if (!Directory.Exists(limitToDirectory))
-            {
-                CreateDirectory(limitToDirectory);
-            }
-
-            _openFileDialogLimitDirectory.InitialDirectory =
-                !string.IsNullOrEmpty(limitToDirectory) ?
-                    limitToDirectory :
-                    string.Empty;
-
             return _openFileDialogLimitDirectory.ShowDialog() != DialogResult.OK ? null : _openFileDialogLimitDirectory.FileName;
         }
 

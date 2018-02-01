@@ -93,6 +93,8 @@ namespace SDM.Forms
             _fullExportMenu.ExportFullReportButton.Click += new EventHandler(this.ExportSinlgeReport);
             _summedExportMenu.exportSummedReportButton.Click += new EventHandler(this.ExportSinlgeReport);
             _summedExportMenu.exportAllReports.Click += new EventHandler(this.ExportAllSummedReports);
+
+            ExcelContentPanel.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
         }
 
         private void TopBarMenu_MouseDown(object sender, MouseEventArgs e)

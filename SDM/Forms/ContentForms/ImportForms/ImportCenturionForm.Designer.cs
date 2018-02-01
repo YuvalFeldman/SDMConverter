@@ -61,11 +61,11 @@
             this.updateUsagesButton.TabIndex = 11;
             this.updateUsagesButton.Text = "Update usages";
             this.updateUsagesButton.UseVisualStyleBackColor = true;
-            this.updateUsagesButton.Click += new System.EventHandler(this.updateUsagesButton_Click);
             // 
             // deleteSelectedButton
             // 
-            this.deleteSelectedButton.BackColor = System.Drawing.Color.Red;
+            this.deleteSelectedButton.BackColor = System.Drawing.Color.DarkRed;
+            this.deleteSelectedButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.deleteSelectedButton.ForeColor = System.Drawing.Color.White;
             this.deleteSelectedButton.Location = new System.Drawing.Point(9, 416);
             this.deleteSelectedButton.Name = "deleteSelectedButton";
@@ -79,7 +79,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.ClientSize = new System.Drawing.Size(188, 451);
             this.Controls.Add(this.deleteSelectedButton);
             this.Controls.Add(this.updateUsagesButton);

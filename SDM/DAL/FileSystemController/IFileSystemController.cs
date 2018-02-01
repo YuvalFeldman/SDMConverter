@@ -6,13 +6,11 @@ namespace SDM.DAL.FileSystemController
     {
         string GetSaveDialogFilePath();
 
-        string GetOpenDialogFilePath(string limitToDirectory = null);
+        string GetOpenDialogFilePath();
 
         string GetDirectoryPath();
 
         List<string> ReadFileContents(string path);
-
-        List<string> GetFileNamesInDirectory(string path);
 
         void WriteDataToFile(string path, List<string> data);
 
@@ -24,8 +22,8 @@ namespace SDM.DAL.FileSystemController
 
         void DeleteFile(string path);
 
-        void DeleteDirectory(string path);
         List<string> GetAllFileNamesInDirectory(string path);
+
         void AppendClientId(string path, string id);
     }
 }

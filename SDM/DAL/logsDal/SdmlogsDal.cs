@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using SDM.DAL.FileSystemController;
 using SDM.Models.Enums;
 using SDM.Models.LatencyConversionModel;
@@ -23,198 +25,105 @@ namespace SDM.DAL.logsDal
 
         public List<string> GetLogNames(ReportTypes reportType)
         {
-            var logNames = _fileSystemController
-                .GetAllFileNamesInDirectory($"{LogsFolder}\\{reportType}")
-                .Select(Path.GetFileNameWithoutExtension)
-                .ToList();
-            return logNames;
+            try
+            {
+                var logNames = _fileSystemController
+                    .GetAllFileNamesInDirectory($"{LogsFolder}\\{reportType}")
+                    .Select(Path.GetFileNameWithoutExtension)
+                    .ToList();
+                return logNames;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed getting log names, report type: {reportType}. InnerMessage: {e.Message}");
+                throw;
+            }
         }
 
         public string ImportReport(ReportTypes reportType)
         {
-            var logFilePath = _fileSystemController.GetOpenDialogFilePath();
-            if (!string.IsNullOrEmpty(logFilePath))
+            try
             {
-                _fileSystemController.CopyFile(logFilePath, $"{LogsFolder}\\{reportType}\\{Path.GetFileName(logFilePath)}");
-                return Path.GetFileNameWithoutExtension(logFilePath);
-            }
+                var logFilePath = _fileSystemController.GetOpenDialogFilePath();
+                if (!string.IsNullOrEmpty(logFilePath))
+                {
+                    _fileSystemController.CopyFile(logFilePath, $"{LogsFolder}\\{reportType}\\{Path.GetFileName(logFilePath)}");
+                    return Path.GetFileNameWithoutExtension(logFilePath);
+                }
 
-            return string.Empty;
+                return string.Empty;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed importing report, report type: {reportType}. InnerMessage: {e.Message}");
+                return string.Empty;
+            }
         }
 
         public void DeleteReport(ReportTypes reportType, string reportName)
         {
-            _fileSystemController.DeleteFile($"{LogsFolder}\\{reportType}\\{reportName}.csv");
+            try
+            {
+                _fileSystemController.DeleteFile($"{LogsFolder}\\{reportType}\\{reportName}.csv");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed deleting report, report name: {reportName}, report type: {reportType}. InnerMessage: {e.Message}");
+            }
         }
 
         public CenturionLog GetCenturionLog(string reportName)
         {
-            var logContent = _fileSystemController.ReadFileContents($"{LogsFolder}\\{ReportTypes.CenturionReport}\\{reportName}.csv");
-            var centurionLog = _dataConverter.ConvertCsvToCenturionModel(logContent);
-            return centurionLog;
+            try
+            {
+                var logContent = _fileSystemController.ReadFileContents($"{LogsFolder}\\{ReportTypes.CenturionReport}\\{reportName}.csv");
+                var centurionLog = _dataConverter.ConvertCsvToCenturionModel(logContent);
+                return centurionLog;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed getting centurion log: {reportName}. InnerMessage: {e.Message}");
+                throw;
+            }
         }
 
         public ClientLog GetClientLog(string reportName, LatencyConversionModel conversionModel)
         {
-            var logContent = _fileSystemController.ReadFileContents($"{LogsFolder}\\{ReportTypes.ClientReport}\\{reportName}.csv");
-            var clientLog = _dataConverter.ConvertCsvToClientDataModel(logContent, conversionModel);
-            return clientLog;
+            try
+            {
+                var logContent = _fileSystemController.ReadFileContents($"{LogsFolder}\\{ReportTypes.ClientReport}\\{reportName}.csv");
+                var clientLog = _dataConverter.ConvertCsvToClientDataModel(logContent, conversionModel);
+                return clientLog;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed getting client log: {reportName}. InnerMessage: {e.Message}");
+                throw;
+            }
         }
 
         public LatencyConversionModel GetReportLatencyLog(string reportName)
         {
-            if (string.IsNullOrEmpty(reportName))
+            try
             {
-                return new LatencyConversionModel();
+                if (string.IsNullOrEmpty(reportName))
+                {
+                    return new LatencyConversionModel();
+                }
+                var logContent = _fileSystemController.ReadFileContents($"{LogsFolder}\\{ReportTypes.LatencyConversionTable}\\{reportName}.csv");
+                var latencyConversionTable = _dataConverter.ConvertCsvToLatencyConversionModel(logContent);
+                return latencyConversionTable;
             }
-            var logContent = _fileSystemController.ReadFileContents($"{LogsFolder}\\{ReportTypes.LatencyConversionTable}\\{reportName}.csv");
-            var latencyConversionTable = _dataConverter.ConvertCsvToLatencyConversionModel(logContent);
-            return latencyConversionTable;
+            catch (Exception e)
+            {
+                MessageBox.Show($@"Failed latency report: {reportName}. InnerMessage: {e.Message}");
+                throw;
+            }
         }
 
         public void AddClientIdToClientReport(string reportName, string id)
         {
             _fileSystemController.AppendClientId($"{LogsFolder}\\{ReportTypes.ClientReport}\\{reportName}.csv", id);
         }
-
-        //public List<ClientLog> ReadClientLogs(LatencyConversionModel latencyConversionModel)
-        //{
-        //    return _fileSystemController.GetFileNamesInDirectory($".\\ImportLogs\\{ReportTypes.ClientReport}")
-        //        .Select(filePath => _fileSystemController.ReadFileContents($".\\ImportLogs\\{ReportTypes.ClientReport}\\{filePath}"))
-        //        .Select(fileContent => _dataConverter.ConvertCsvToClientDataModel(fileContent, latencyConversionModel))
-        //        .ToList();
-        //}
-
-        //public List<CenturionLog> ReadCenturionLogs()
-        //{
-        //    return _fileSystemController.GetFileNamesInDirectory($".\\ImportLogs\\{ReportTypes.CenturionReport}")
-        //        .Where(path => path != null)
-        //        .Select(filePath => _fileSystemController.ReadFileContents($".\\ImportLogs\\{ReportTypes.CenturionReport}\\{filePath}"))
-        //        .Select(fileContent => _dataConverter.ConvertCsvToCenturionModel(fileContent))
-        //        .ToList();
-        //}
-
-        //public void WriteToFile(List<string> data)
-        //{
-        //    var path = _fileSystemController.GetSaveDialogFilePath();
-        //    if (path == null)
-        //    {
-        //        return;
-        //    }
-
-        //    _fileSystemController.WriteDataToFile(path, data);
-        //}
-
-        //public void WriteToFile(FullDatabaseModel data)
-        //{
-        //    var path = _fileSystemController.GetSaveDialogFilePath();
-        //    if (path == null)
-        //    {
-        //        return;
-        //    }
-
-        //    var fullDatabaseCsv = _dataConverter.ConvertToCsv(data);
-        //    _fileSystemController.WriteDataToFile(path, fullDatabaseCsv);
-
-        //    MessageBox.Show("Full dept report exported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
-        //}
-
-        //public void WriteToFile(SummedDatabaseModel data)
-        //{
-        //    var path = _fileSystemController.GetDirectoryPath();
-        //    if (path == null)
-        //    {
-        //        return;
-        //    }
-
-        //    var summedDatabaseCsv = _dataConverter.ConvertToCsv(data);
-        //    foreach (var partnerCsv in summedDatabaseCsv)
-        //    {
-        //        _fileSystemController.WriteDataToFile($"{path}\\{partnerCsv.Key}.csv", partnerCsv.Value);
-        //    }
-
-        //    MessageBox.Show("Summed dept report exported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
-        //}
-
-        //public void LogData(ReportTypes reportType, string clientId = null)
-        //{
-        //    var path = _fileSystemController.GetOpenDialogFilePath();
-        //    if (path == null)
-        //    {
-        //        return;
-        //    }
-        //    var logFolder = $".\\ImportLogs\\{reportType}";
-        //    var reportName = Path.GetFileName(path);
-        //    var newFilePath = $"{logFolder}\\{reportName}";
-
-        //    if (File.Exists(newFilePath))
-        //    {
-        //        _fileSystemController.DeleteFile(newFilePath);
-        //    }
-
-        //    _fileSystemController.CreateDirectory(logFolder);
-        //    _fileSystemController.CopyFile(path, newFilePath);
-
-        //    if (!string.IsNullOrEmpty(clientId))
-        //    {
-        //        var fileContent = _fileSystemController.ReadFileContents(newFilePath);
-        //        if (fileContent == null || !fileContent.Any())
-        //        {
-        //            return;
-        //        }
-        //        fileContent[0] = $"{fileContent[0]}, client id";
-        //        for (var i = 1; i < fileContent.Count; i++)
-        //        {
-        //            fileContent[i] = $"{fileContent[i]}, {clientId}";
-        //        }
-
-        //        File.WriteAllLines(newFilePath, fileContent, Encoding.GetEncoding("windows-1255"));
-        //    }
-        //    MessageBox.Show(
-        //        reportType == ReportTypes.ClientReport
-        //            ? "Client report import completed successfully"
-        //            : "Centurion report import completed successfully", "Reports manager", MessageBoxButtons.OK,
-        //        MessageBoxIcon.None);
-        //}
-
-        //public void DeleteReport(ReportTypes reportType)
-        //{
-        //    var filePath = _fileSystemController.GetOpenDialogFilePath($".\\ImportLogs\\{reportType}\\");
-        //    var deleteResult = _fileSystemController.DeleteFile(filePath);
-
-        //    if (deleteResult)
-        //    {
-        //        MessageBox.Show("Report deleted successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
-        //    }
-        //}
-
-        //public void ImportLatencyConversionTable()
-        //{
-        //    if (!Directory.Exists($".\\ImportLogs\\LatencyConversionTable"))
-        //    {
-        //        Directory.CreateDirectory($".\\ImportLogs\\LatencyConversionTable");
-        //    }
-        //    if (!File.Exists($".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv"))
-        //    {
-        //        var fileState = File.Create($".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv");
-        //        fileState.Close();
-        //    }
-        //    var path = _fileSystemController.GetOpenDialogFilePath();
-        //    File.Copy(path, ".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv", true);
-
-        //    MessageBox.Show("Latency conversion table imported successfully", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.None);
-        //}
-
-        //public LatencyConversionModel ReadLatencyConversionTable()
-        //{
-        //    var latencyConversionTableContent = _fileSystemController.ReadFileContents($".\\ImportLogs\\LatencyConversionTable\\latencyConversionTable.csv");
-        //    if (latencyConversionTableContent == null)
-        //    {
-        //        return new LatencyConversionModel();
-        //    }
-
-        //    var convertedLatencyTable = _dataConverter.ConvertCsvToLatencyConversionModel(latencyConversionTableContent);
-        //    return convertedLatencyTable;
-        //}
     }
 }

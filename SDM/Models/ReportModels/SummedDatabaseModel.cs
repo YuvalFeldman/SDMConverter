@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using SDM.Models.Enums;
 
 namespace SDM.Models.ReportModels
 {
@@ -7,14 +7,19 @@ namespace SDM.Models.ReportModels
     {
         public Dictionary<string, SummedDatabasePartner> SummedDatabase { get; set; } = new Dictionary<string, SummedDatabasePartner>();
     }
+
     public class SummedDatabasePartner
     {
-        public string ClientName { get; set; }
-        public Dictionary<DateTime, List<SummedDatabaseRow>> SummedDbPerDate { get; set; }
+        public Dictionary<int, YearlySummedDbData> YearlySummedDbData { get; set; } = new Dictionary<int, YearlySummedDbData>();
     }
-    public class SummedDatabaseRow
+
+    public class YearlySummedDbData
     {
-        public DateTime Month { get; set; }
+        public Dictionary<MonthEnum, List<MonthlySummedDbData>> MonthlySummedDbData { get; set; } = new Dictionary<MonthEnum, List<MonthlySummedDbData>>();
+    }
+
+    public class MonthlySummedDbData
+    {
         public int InvoiceNumber { get; set; }
         public float PaymentDue { get; set; }
         public float PaymentPaid { get; set; }
