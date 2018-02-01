@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SDM.Forms.ContentForms.ExportMenuForms;
 using SDM.Forms.ContentForms.ImportForms;
-using SDM.SDM;
 using SDM.Utilities.Calculators.FullReportCalculator;
 using SDM.Utilities.Calculators.SummedReportCalculator;
 
@@ -27,6 +26,8 @@ namespace SDM.Forms
         private readonly BindingSource _exportOptionsBindingSource = new BindingSource();
         private readonly BindingSource _importOptionsBindingSource = new BindingSource();
 
+        private List<string> _fullReport = new List<string>();
+        private Dictionary<string, List<string>> _summedReport = new Dictionary<string, List<string>>();
         private List<string> _report = new List<string>();
 
         [DllImport("User32.dll")]
@@ -128,7 +129,7 @@ namespace SDM.Forms
                 _summedExportMenu.Show();
             }
 
-            _report = GetUpdatedReport();
+            GetUpdatedReport();
             UpdateExcelContentPanel();
         }
 
@@ -177,16 +178,28 @@ namespace SDM.Forms
             }
             for (var j = 1; j < numberOfRows; j++)
             {
-                ExcelContentPanel.Rows.Add(_report[j].Split(','));
+                ExcelContentPanel.Rows.Add(_report[j].Split(',').ToArray());
                 ExcelContentPanel.Rows[j - 1].HeaderCell.Value = (j - 1).ToString();
             }
         }
 
-        private List<string> GetUpdatedReport()
+        private void GetUpdatedReport()
         {
-            return ExportTypeComboBox.SelectedIndex.Equals(0)
-                ? _fullReportCalculator.GetFullReport()
-                : _summedReportCalculator.GetSummedReport();
+            var centurionLogNames = _importCenturionForm.GetSelectedCenturionLogs();
+            var clientLogNames = _importClientForm.GetSelectedClientLogs();
+            var latencyConversionTableName = _importLatencyForm.GetSelectedLatencyConversionTables();
+
+            if (ExportTypeComboBox.SelectedIndex.Equals(0))
+            {
+                _fullReport = _fullReportCalculator.GetFullReport(centurionLogNames, clientLogNames, latencyConversionTableName);
+                _report = _fullReport;
+            }
+            else
+            {
+                _summedReport = _summedReportCalculator.GetSummedReport(centurionLogNames, clientLogNames, latencyConversionTableName);
+                _report = _summedReport.Any() ? _summedReport[_summedReport.Keys.First()] : new List<string>();
+                _summedExportMenu.UpdateSummedComboBoxOptions(_summedReport.Keys.ToList());
+            }
         }
     }
 }

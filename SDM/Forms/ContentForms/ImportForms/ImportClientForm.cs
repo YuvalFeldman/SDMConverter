@@ -67,5 +67,15 @@ namespace SDM.Forms.ContentForms.ImportForms
                 _clientLogs.Add(clientCheckBox);
             }
         }
+
+        public List<string> GetSelectedClientLogs()
+        {
+            var selectedClientLogs = _clientLogs
+                .Where(x => x.Checked)
+                .Select(x => x.Text)
+                .ToList();
+
+            return selectedClientLogs;
+        }
     }
 }

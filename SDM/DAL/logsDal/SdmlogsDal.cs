@@ -63,6 +63,10 @@ namespace SDM.DAL.logsDal
 
         public LatencyConversionModel GetReportLatencyLog(string reportName)
         {
+            if (string.IsNullOrEmpty(reportName))
+            {
+                return new LatencyConversionModel();
+            }
             var logContent = _fileSystemController.ReadFileContents($"{LogsFolder}\\{ReportTypes.LatencyConversionTable}\\{reportName}.csv");
             var latencyConversionTable = _dataConverter.ConvertCsvToLatencyConversionModel(logContent);
             return latencyConversionTable;

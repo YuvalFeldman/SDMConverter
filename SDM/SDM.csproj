@@ -112,14 +112,12 @@
     </Compile>
     <Compile Include="SDM\ISDM.cs" />
     <Compile Include="SDM\SDM.cs" />
+    <Compile Include="Utilities\Calculators\IssuesReportCalculator\IIssuesReportCalculator.cs" />
+    <Compile Include="Utilities\Calculators\IssuesReportCalculator\IssuesReportCalculator.cs" />
     <Compile Include="Utilities\DataConverter\DataConverter.cs" />
     <Compile Include="Utilities\DataConverter\IDataConverter.cs" />
-    <Compile Include="Utilities\DataImporter\DataImporter.cs" />
-    <Compile Include="Utilities\DataImporter\IDataImporter.cs" />
     <Compile Include="Utilities\Calculators\FullReportCalculator\FullReportCalculator.cs" />
     <Compile Include="Utilities\Calculators\FullReportCalculator\IFullReportCalculator.cs" />
-    <Compile Include="Utilities\ReportRetriever\IReportRetriever.cs" />
-    <Compile Include="Utilities\ReportRetriever\ReportRetriever.cs" />
     <Compile Include="Utilities\Calculators\SummedReportCalculator\ISummedReportCalculator.cs" />
     <Compile Include="Utilities\Calculators\SummedReportCalculator\SummedReportCalculator.cs" />
     <EmbeddedResource Include="Form1.resx">

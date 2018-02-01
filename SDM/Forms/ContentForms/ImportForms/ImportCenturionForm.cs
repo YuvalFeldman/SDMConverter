@@ -67,5 +67,15 @@ namespace SDM.Forms.ContentForms.ImportForms
                 _centurionLogs.Add(centurionCheckBox);
             }
         }
+
+        public List<string> GetSelectedCenturionLogs()
+        {
+            var selectedClientLogs = _centurionLogs
+                .Where(x => x.Checked)
+                .Select(x => x.Text)
+                .ToList();
+
+            return selectedClientLogs;
+        }
     }
 }

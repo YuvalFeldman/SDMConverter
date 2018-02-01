@@ -49,7 +49,7 @@
             this.centurionImport.TabIndex = 0;
             this.centurionImport.Text = "Import Centurion Report";
             this.centurionImport.UseVisualStyleBackColor = true;
-            this.centurionImport.Click += new System.EventHandler(this.centurionImport_Click);
+            //this.centurionImport.Click += new System.EventHandler(this.centurionImport_Click);
             // 
             // ImportClient
             // 
@@ -59,7 +59,7 @@
             this.ImportClient.TabIndex = 1;
             this.ImportClient.Text = "Import Client Data Report";
             this.ImportClient.UseVisualStyleBackColor = true;
-            this.ImportClient.Click += new System.EventHandler(this.ImportClient_Click);
+            //this.ImportClient.Click += new System.EventHandler(this.ImportClient_Click);
             // 
             // ExportFullDb
             // 
@@ -69,7 +69,7 @@
             this.ExportFullDb.TabIndex = 2;
             this.ExportFullDb.Text = "Export Full Dept Report";
             this.ExportFullDb.UseVisualStyleBackColor = true;
-            this.ExportFullDb.Click += new System.EventHandler(this.ExportFullDb_Click);
+            //this.ExportFullDb.Click += new System.EventHandler(this.ExportFullDb_Click);
             // 
             // ExportSummedDb
             // 
@@ -79,7 +79,7 @@
             this.ExportSummedDb.TabIndex = 3;
             this.ExportSummedDb.Text = "Export Summed Dept Report";
             this.ExportSummedDb.UseVisualStyleBackColor = true;
-            this.ExportSummedDb.Click += new System.EventHandler(this.ExportSummedDb_Click);
+            //this.ExportSummedDb.Click += new System.EventHandler(this.ExportSummedDb_Click);
             // 
             // DeleteCenturion
             // 
@@ -89,7 +89,7 @@
             this.DeleteCenturion.TabIndex = 4;
             this.DeleteCenturion.Text = "Delete Report";
             this.DeleteCenturion.UseVisualStyleBackColor = true;
-            this.DeleteCenturion.Click += new System.EventHandler(this.DeleteCenturion_Click);
+            //this.DeleteCenturion.Click += new System.EventHandler(this.DeleteCenturion_Click);
             // 
             // DeleteClientData
             // 
@@ -99,7 +99,7 @@
             this.DeleteClientData.TabIndex = 5;
             this.DeleteClientData.Text = "Get report invoice id issues";
             this.DeleteClientData.UseVisualStyleBackColor = true;
-            this.DeleteClientData.Click += new System.EventHandler(this.DeleteClientData_Click);
+            //this.DeleteClientData.Click += new System.EventHandler(this.DeleteClientData_Click);
             // 
             // LatencyConversionTable
             // 
@@ -109,7 +109,7 @@
             this.LatencyConversionTable.TabIndex = 6;
             this.LatencyConversionTable.Text = "Set Latency Conversion Table";
             this.LatencyConversionTable.UseVisualStyleBackColor = true;
-            this.LatencyConversionTable.Click += new System.EventHandler(this.LatencyConversionTable_Click);
+            //this.LatencyConversionTable.Click += new System.EventHandler(this.LatencyConversionTable_Click);
             // 
             // ClientIdBox
             // 
@@ -118,7 +118,7 @@
             this.ClientIdBox.Size = new System.Drawing.Size(139, 20);
             this.ClientIdBox.TabIndex = 7;
             this.ClientIdBox.Text = "Client Id";
-            this.ClientIdBox.TextChanged += new System.EventHandler(this.ClientIdBox_TextChanged);
+            //this.ClientIdBox.TextChanged += new System.EventHandler(this.ClientIdBox_TextChanged);
             // 
             // checkBox1
             // 
@@ -129,7 +129,7 @@
             this.checkBox1.TabIndex = 8;
             this.checkBox1.Text = "Use conversion table";
             this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            //this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // button1
             // 

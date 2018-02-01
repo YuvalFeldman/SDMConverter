@@ -57,14 +57,29 @@ namespace SDM.Forms.ContentForms.ImportForms
             var latencyTableNames = _logsDal.GetLogNames(ReportTypes.LatencyConversionTable);
 
             FilesContentPanel.Controls.Clear();
+            var latencyRadioButton = new RadioButton { Text = @"Use none" };
+            latencyRadioButton.Show();
+            FilesContentPanel.Controls.Add(latencyRadioButton);
+            _latencyTables.Add(latencyRadioButton);
 
             foreach (var latencyTable in latencyTableNames)
             {
-                var latencyRadioButton = new RadioButton { Text = latencyTable };
+                latencyRadioButton = new RadioButton { Text = latencyTable };
                 latencyRadioButton.Show();
                 FilesContentPanel.Controls.Add(latencyRadioButton);
                 _latencyTables.Add(latencyRadioButton);
             }
+        }
+
+        public string GetSelectedLatencyConversionTables()
+        {
+            var selectedRadioButton = _latencyTables.Any(x => x.Checked) ?
+                _latencyTables.First(x => x.Checked).Text ?? string.Empty :
+                string.Empty;
+
+            return string.Equals(selectedRadioButton, "Use none", StringComparison.OrdinalIgnoreCase)
+                ? string.Empty
+                : selectedRadioButton;
         }
     }
 }

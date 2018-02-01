@@ -150,6 +150,12 @@ namespace SDM.DAL.FileSystemController
             {
                 Directory.CreateDirectory(newFilePath);
             }
+            //if (!File.Exists(newFilePath))
+            //{
+            //    File.Create(newFilePath);
+            //}
+            //var content = ReadFileContents(originFilePath);
+            //WriteDataToFile(newFilePath, content);
             File.Copy(originFilePath, newFilePath, true);
         }
 

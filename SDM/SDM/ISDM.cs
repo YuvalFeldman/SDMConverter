@@ -2,20 +2,20 @@
 {
     public interface ISDM
     {
-        void ImportClientReport(string clientId);
+        //void ImportClientReport(string clientId);
 
-        void ImportcenturionReport();
+        //void ImportcenturionReport();
 
-        void ExportFullDebtReport(bool useConversionTable);
+        //void ExportFullDebtReport(bool useConversionTable);
 
-        void ExportSummedDebtReport(bool useConversionTable);
+        //void ExportSummedDebtReport(bool useConversionTable);
 
-        void DeleteClientReport();
+        //void DeleteClientReport();
 
-        void DeleteCenturionReport();
+        //void DeleteCenturionReport();
 
-        void SetLatencyConversionTable();
+        //void SetLatencyConversionTable();
 
-        void GetReportInvoiceIdIssues(bool useConversionTable);
+        //void GetReportInvoiceIdIssues(bool useConversionTable);
     }
 }

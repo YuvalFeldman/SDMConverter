@@ -7,10 +7,9 @@ using SDM.Forms.ContentForms.ExportMenuForms;
 using SDM.Forms.ContentForms.ImportForms;
 using SDM.SDM;
 using SDM.Utilities.Calculators.FullReportCalculator;
+using SDM.Utilities.Calculators.IssuesReportCalculator;
 using SDM.Utilities.Calculators.SummedReportCalculator;
 using SDM.Utilities.DataConverter;
-using SDM.Utilities.DataImporter;
-using SDM.Utilities.ReportRetriever;
 
 namespace SDM.Config
 {
@@ -21,8 +20,7 @@ namespace SDM.Config
             Bind<IReportsDal>().To<ReportsDal>().InSingletonScope();
             Bind<ISdmlogsDal>().To<SdmlogsDal>().InSingletonScope();
             Bind<IDataConverter>().To<DataConverter>().InSingletonScope();
-            Bind<IDataImporter>().To<DataImporter>().InSingletonScope();
-            Bind<IReportRetriever>().To<ReportRetriever>().InSingletonScope();
+            Bind<IIssuesReportCalculator>().To<IssuesReportCalculator>().InSingletonScope();
             Bind<IFileSystemController>().To<FileSystemController>().InSingletonScope();
             Bind<ISDM>().To<SDM.SDM>().InSingletonScope();
             Bind<ISummedReportCalculator>().To<SummedReportCalculator>().InSingletonScope();
