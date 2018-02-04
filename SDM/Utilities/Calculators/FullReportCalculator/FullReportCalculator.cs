@@ -31,20 +31,20 @@ namespace SDM.Utilities.Calculators.FullReportCalculator
 
                 try
                 {
-                    AddCenturionLogs(fullDatabaseModel, centurionLogs);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show($@"Failed adding centurions logs to full report model. InnerMessage: {e.Message}");
-                    throw;
-                }
-                try
-                {
                     AddClientLogs(fullDatabaseModel, clientLogs);
                 }
                 catch (Exception e)
                 {
                     MessageBox.Show($@"Failed adding client logs to full report model. InnerMessage: {e.Message}");
+                    throw;
+                }
+                try
+                {
+                    AddCenturionLogs(fullDatabaseModel, centurionLogs);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show($@"Failed adding centurions logs to full report model. InnerMessage: {e.Message}");
                     throw;
                 }
 
