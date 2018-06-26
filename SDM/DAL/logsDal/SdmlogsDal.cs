@@ -72,7 +72,7 @@ namespace SDM.DAL.logsDal
             }
         }
 
-        public CenturionLog GetCenturionLog(string reportName)
+        public Tuple<CenturionLog, List<string>>  GetCenturionLog(string reportName)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace SDM.DAL.logsDal
             }
         }
 
-        public ClientLog GetClientLog(string reportName, LatencyConversionModel conversionModel)
+        public Tuple<ClientLog, List<string>> GetClientLog(string reportName, LatencyConversionModel conversionModel)
         {
             try
             {

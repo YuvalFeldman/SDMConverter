@@ -1,52 +1,118 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Windows.Forms;
+using SDM.DAL.logsDal;
 using SDM.Models.ReportModels;
 
 namespace SDM.Utilities.Calculators.IssuesReportCalculator
 {
     public class IssuesReportCalculator : IIssuesReportCalculator
     {
-        public void OutputInvoiceNumberIssues(FullDatabaseModel fullDatabase, List<CenturionLog> data)
+        private readonly ISdmlogsDal _logDal;
+
+        public IssuesReportCalculator(ISdmlogsDal logDal)
         {
-            //TODO: needs the full database filled with only client reports
-            if (!data.Any())
+            _logDal = logDal;
+        }
+
+        public List<string> GetReportIssues(List<string> clientLogNames, List<string> additionalIssues, string latencyTable = null)
+        {
+            var latencyConversionTable = _logDal.GetReportLatencyLog(latencyTable);
+            var clientLogs = clientLogNames.Select(logName => _logDal.GetClientLog(logName, latencyConversionTable)).Select(x => x.Item1).ToList();
+
+            var duplicateClientReportInvoiceRow = GetDuplicateClientReportInvoiceRows(clientLogs);
+            var differentClientNumberRowsWithSameCompanyNumber = GetClientRowsWithDifferentClientNumberForTheSameCompanyNumber(clientLogs);
+
+            var issuesList = GetIssuesList(duplicateClientReportInvoiceRow,
+                differentClientNumberRowsWithSameCompanyNumber, additionalIssues);
+
+            return issuesList;
+        }
+
+        private Dictionary<int, List<ClientModelRow>> GetDuplicateClientReportInvoiceRows(List<ClientLog> clientLogs)
+        {
+            var clientColumnsByInvoiceNumber = new Dictionary<int, List<ClientModelRow>>();
+            foreach (var clientLog in clientLogs)
             {
-                return;
-            }
-            var uniqueCenturionReportRows =
-                data
-                    .Select(report => report.CenturionReport)
-                    .Aggregate((a, b) => a.Union(b).ToList());
-
-            var centurionDataWithNewInvoiceNumbers = new List<string>();
-
-            foreach (var uniqueCenturionReportRow in uniqueCenturionReportRows)
-            {
-                var fullDbRow = fullDatabase
-                    .FullDatabase
-                    .FirstOrDefault(row => row.InvoiceNumber.Equals(uniqueCenturionReportRow.InvoiceNumber));
-
-                if (fullDbRow == null)
+                foreach (var clientModelRow in clientLog.ClientReport)
                 {
-                    if (!centurionDataWithNewInvoiceNumbers.Any())
+                    if (clientColumnsByInvoiceNumber.ContainsKey(clientModelRow.InvoiceNumber))
                     {
-                        centurionDataWithNewInvoiceNumbers.Add("ClientId,InvoiceNumber,PaymentDate,AmountPaid");
+                        clientColumnsByInvoiceNumber[clientModelRow.InvoiceNumber].Add(clientModelRow);
                     }
-                    centurionDataWithNewInvoiceNumbers.Add($"{uniqueCenturionReportRow.ClientId},{uniqueCenturionReportRow.InvoiceNumber},{uniqueCenturionReportRow.PaymentDate},{uniqueCenturionReportRow.AmountPaid}");
+                    else
+                    {
+                        clientColumnsByInvoiceNumber.Add(clientModelRow.InvoiceNumber, new List<ClientModelRow> { clientModelRow });
+                    }
                 }
             }
 
-            if (centurionDataWithNewInvoiceNumbers.Any())
-            {
-                MessageBox.Show("Found centurion reports with invoice numbers that did not match any client report invoice numbers, exporting to error file", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            var duplicateInvoiceRows = clientColumnsByInvoiceNumber.Where(x => x.Value.Count > 1).ToDictionary(k => k.Key, v => v.Value);
 
-                //_reportsDal.WriteToFile(centurionDataWithNewInvoiceNumbers);
-            }
-            else
+            return duplicateInvoiceRows;
+        }
+
+        private Dictionary<int, List<ClientModelRow>> GetClientRowsWithDifferentClientNumberForTheSameCompanyNumber(List<ClientLog> clientLogs)
+        {
+            var clientRowsByCompanyNumber = new Dictionary<int, List<ClientModelRow>>();
+            foreach (var clientLog in clientLogs)
             {
-                MessageBox.Show("No issues found with invoice numbers", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                foreach (var clientModelRow in clientLog.ClientReport)
+                {
+                    if (clientRowsByCompanyNumber.ContainsKey(clientModelRow.CompanyNumber))
+                    {
+                        clientRowsByCompanyNumber[clientModelRow.CompanyNumber].Add(clientModelRow);
+                    }
+                    else
+                    {
+                        clientRowsByCompanyNumber.Add(clientModelRow.CompanyNumber, new List<ClientModelRow> { clientModelRow });
+                    }
+                }
             }
+
+            var clientRowsWithDifferences = new Dictionary<int, List<ClientModelRow>>();
+            foreach (var clientRowKvp in clientRowsByCompanyNumber)
+            {
+                foreach (var clientModelRow in clientRowKvp.Value)
+                {
+                    if (!clientRowsWithDifferences.ContainsKey(clientRowKvp.Key) && clientRowKvp.Value.Any(x => x.ClientNumber != clientModelRow.ClientNumber))
+                    {
+                        clientRowsWithDifferences.Add(clientRowKvp.Key, clientRowKvp.Value);
+                    }
+                }
+            }
+
+            return clientRowsWithDifferences;
+        }
+
+        private List<string> GetIssuesList(Dictionary<int, List<ClientModelRow>> duplicateClientReportInvoiceRow,
+            Dictionary<int, List<ClientModelRow>> differentClientNumberRowsWithSameCompanyNumber, List<string> additionalIssues)
+        {
+            var issuesList = new List<string>();
+
+            if (duplicateClientReportInvoiceRow.Any())
+            {
+                issuesList.Add("Client Report duplicate invoice numbers:");
+                issuesList.AddRange(duplicateClientReportInvoiceRow.Select(x => $"Invoice number: {x.Key}, repetitions: {x.Value.Count}"));
+            }
+
+            if (differentClientNumberRowsWithSameCompanyNumber.Any())
+            {
+                issuesList.Add(string.Empty);
+                issuesList.Add("Client Report different client numbers with same company numbers:");
+                issuesList.AddRange(differentClientNumberRowsWithSameCompanyNumber.Select(x => $"Company number: {x.Key}, clientNumbers: {string.Join(",", x.Value.Select(y => y.ClientNumber))}"));
+            }
+
+            var filteredAdditionalIssues = additionalIssues.Where(x => !string.IsNullOrEmpty(x)).ToList();
+            if (filteredAdditionalIssues.Any())
+            {
+                issuesList.Add(string.Empty);
+                issuesList.Add("Additional issues encountered:");
+                issuesList.AddRange(filteredAdditionalIssues);
+            }
+
+            return issuesList;
         }
     }
 }

@@ -20,15 +20,15 @@ namespace SDM.Utilities.Calculators.SummedReportCalculator
             _fullReportCalculator = fullReportCalculator;
         }
 
-        public SummedDatabaseModel GetSummedReportModel(List<string> centurionLogNames, List<string> clientLogNames, string latencyTable = null)
+        public Tuple<SummedDatabaseModel, List<string>> GetSummedReportModel(List<string> centurionLogNames, List<string> clientLogNames, string latencyTable = null)
         {
             try
             {
                 var fullReportModel = _fullReportCalculator.GetFullReportModel(centurionLogNames, clientLogNames, latencyTable);
 
-                var summedReportModel = ConvertFullReportToSummedReport(fullReportModel);
+                var summedReportModel = ConvertFullReportToSummedReport(fullReportModel.Item1);
 
-                return summedReportModel;
+                return new Tuple<SummedDatabaseModel, List<string>>(summedReportModel, new List<string>());
             }
             catch (Exception e)
             {
@@ -37,11 +37,11 @@ namespace SDM.Utilities.Calculators.SummedReportCalculator
             }
         }
 
-        public Dictionary<string, List<string>> GetSummedReport(List<string> centurionLogNames, List<string> clientLogNames, string latencyTable = null)
+        public Tuple<Dictionary<string, List<string>>, List<string>> GetSummedReport(List<string> centurionLogNames, List<string> clientLogNames, string latencyTable = null)
         {
             var summedReportModel = GetSummedReportModel(centurionLogNames, clientLogNames, latencyTable);
-            var csvReport = _dataConverter.ConvertToCsv(summedReportModel);
-            return csvReport;
+            var csvReport = _dataConverter.ConvertToCsv(summedReportModel.Item1);
+            return new Tuple<Dictionary<string, List<string>>, List<string>>(csvReport, new List<string>());
         }
 
         private SummedDatabaseModel ConvertFullReportToSummedReport(FullDatabaseModel fullReportModel)

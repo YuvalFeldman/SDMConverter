@@ -19,56 +19,67 @@ namespace SDM.Utilities.Calculators.FullReportCalculator
             _logDal = logDal;
         }
 
-        public FullDatabaseModel GetFullReportModel(List<string> centurionLogNames, List<string> clientLogNames, string latencyTable = null)
+        public Tuple<FullDatabaseModel, List<string>> GetFullReportModel(List<string> centurionLogNames, List<string> clientLogNames, string latencyTable = null)
         {
             try
             {
                 var fullDatabaseModel = new FullDatabaseModel();
+                var issues = new List<string>();
 
-                var centurionLogs = centurionLogNames.Select(_logDal.GetCenturionLog).ToList();
+                var centurionLogsAndIssues = centurionLogNames.Select(_logDal.GetCenturionLog).ToList();
                 var latencyConversionTable = _logDal.GetReportLatencyLog(latencyTable);
-                var clientLogs = clientLogNames.Select(logName => _logDal.GetClientLog(logName, latencyConversionTable)).ToList();
+                var clientLogsAndIssues = clientLogNames.Select(logName => _logDal.GetClientLog(logName, latencyConversionTable)).ToList();
+
+                centurionLogsAndIssues.ForEach(x => issues.AddRange(x.Item2));
+                clientLogsAndIssues.ForEach(x => issues.AddRange(x.Item2));
 
                 try
                 {
-                    AddClientLogs(fullDatabaseModel, clientLogs);
+                    issues.AddRange(AddClientLogsGetBackIssues(fullDatabaseModel, clientLogsAndIssues.Select(x => x.Item1).ToList()).Where(x => !string.IsNullOrEmpty(x)));
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show($@"Failed adding client logs to full report model. InnerMessage: {e.Message}");
+                    MessageBox.Show($@"Failed adding client logs to full report model. InnerMessage: {e.Message}, issues cataloged in issues file.");
                     throw;
                 }
                 try
                 {
-                    AddCenturionLogs(fullDatabaseModel, centurionLogs);
+                    issues.AddRange(AddCenturionLogsGetBackIssues(fullDatabaseModel, centurionLogsAndIssues.Select(x => x.Item1).ToList()).Where(x => !string.IsNullOrEmpty(x)));
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show($@"Failed adding centurions logs to full report model. InnerMessage: {e.Message}");
+                    MessageBox.Show($@"Failed adding centurions logs to full report model. InnerMessage: {e.Message}, issues cataloged in issues file.");
                     throw;
                 }
 
-                return fullDatabaseModel;
+                return new Tuple<FullDatabaseModel, List<string>>(fullDatabaseModel, issues);
             }
             catch (Exception e)
             {
-                MessageBox.Show($@"Failed calculating full report model. InnerMessage: {e.Message}");
+                MessageBox.Show($@"Failed calculating full report model. InnerMessage: {e.Message}, issues cataloged in issues file.");
                 throw;
             }
         }
 
-        public List<string> GetFullReport(List<string> centurionLogNames, List<string> clientLogNames, string latencyTable = null)
+        public Tuple<List<string>, List<string>> GetFullReport(List<string> centurionLogNames, List<string> clientLogNames, string latencyTable = null)
         {
-            var fullReportModel = GetFullReportModel(centurionLogNames, clientLogNames, latencyTable);
-            var csvReport = _dataConverter.ConvertToCsv(fullReportModel);
-            return csvReport;
+            var fullReportModelAndIssues = GetFullReportModel(centurionLogNames, clientLogNames, latencyTable);
+            var fullReport = fullReportModelAndIssues.Item1;
+            var issues = fullReportModelAndIssues.Item2;
+
+            var csvReportAndIssues = _dataConverter.ConvertToCsv(fullReport);
+            var csvReport = csvReportAndIssues.Item1;
+            var issues2 = csvReportAndIssues.Item2;
+
+            return new Tuple<List<string>, List<string>>(csvReport, issues.Concat(issues2).ToList());
         }
 
-        private void AddClientLogs(FullDatabaseModel fullDatabase, List<ClientLog> clientLogs)
+        private List<string> AddClientLogsGetBackIssues(FullDatabaseModel fullDatabase, List<ClientLog> clientLogs)
         {
+            var issues = new List<string>();
             if (!clientLogs.Any())
             {
-                return;
+                return issues;
             }
             var uniqueClientReportRows =
                 clientLogs
@@ -96,13 +107,17 @@ namespace SDM.Utilities.Calculators.FullReportCalculator
 
                 fullDatabase.FullDatabase.Add(newDatabaseRow);
             }
+
+            return issues;
         }
 
-        private void AddCenturionLogs(FullDatabaseModel fullDatabase, List<CenturionLog> centurionLogs)
+        private List<string> AddCenturionLogsGetBackIssues(FullDatabaseModel fullDatabase, List<CenturionLog> centurionLogs)
         {
+            var issues = new List<string>();
+
             if (!centurionLogs.Any())
             {
-                return;
+                return issues;
             }
             var uniqueCenturionReportRows =
                 centurionLogs
@@ -137,6 +152,8 @@ namespace SDM.Utilities.Calculators.FullReportCalculator
                 }
                 fullDbRow.Payments.Add(payment);
             }
+
+            return issues;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using SDM.DAL.FileSystemController;
 
@@ -13,7 +14,7 @@ namespace SDM.DAL.ReportsDal
             _fileSystemController = fileSystemController;
         }
 
-        public void ExportReport(List<string> report)
+        public void ExportReport(List<string> report, List<string> issues)
         {
             if (report == null || !report.Any())
             {
@@ -24,10 +25,11 @@ namespace SDM.DAL.ReportsDal
             if (!string.IsNullOrEmpty(reportDestination))
             {
                 _fileSystemController.WriteDataToFile(reportDestination, report);
+                _fileSystemController.WriteDataToFile($"{Path.GetDirectoryName(reportDestination)}\\Issues.txt", issues);
             }
         }
 
-        public void ExportReports(Dictionary<string, List<string>> reports)
+        public void ExportReports(Dictionary<string, List<string>> reports, List<string> issues)
         {
             if (reports == null || !reports.Any())
             {
@@ -49,6 +51,8 @@ namespace SDM.DAL.ReportsDal
 
                 _fileSystemController.WriteDataToFile($"{reportDestination}\\{report.Key}.csv", report.Value);
             }
+
+            _fileSystemController.WriteDataToFile($"{reportDestination}\\Issues.txt", issues);
         }
     }
 }

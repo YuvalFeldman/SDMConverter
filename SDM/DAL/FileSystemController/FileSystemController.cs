@@ -182,7 +182,7 @@ namespace SDM.DAL.FileSystemController
             }
             if (!Directory.Exists(Path.GetDirectoryName(newFilePath)))
             {
-                Directory.CreateDirectory(newFilePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(newFilePath));
             }
             File.Copy(originFilePath, newFilePath, true);
         }

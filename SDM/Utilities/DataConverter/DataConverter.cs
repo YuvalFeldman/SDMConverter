@@ -22,13 +22,13 @@ namespace SDM.Utilities.DataConverter
         private const string LateBelow90 = "60<Late<90";
         private const string LateAbove90 = "90<Late";
 
-        public List<string> ConvertToCsv(FullDatabaseModel data)
+        public Tuple<List<string>, List<string>> ConvertToCsv(FullDatabaseModel data)
         {
             try
             {
                 if (data == null || !data.FullDatabase.Any())
                 {
-                    return new List<string>();
+                    return new Tuple<List<string>, List<string>>(new List<string>(), new List<string>());
                 }
                 var csvData = new List<string>();
 
@@ -46,7 +46,7 @@ namespace SDM.Utilities.DataConverter
                     select databaseRow.Payments
                         .Aggregate(databaseRowString, (current, paymentDateLatencyPaid) => $"{current},{paymentDateLatencyPaid.PaymentDate.Day}.{paymentDateLatencyPaid.PaymentDate.Month}.{paymentDateLatencyPaid.PaymentDate.Year},{paymentDateLatencyPaid.PaymentPaid},{paymentDateLatencyPaid.Latency}"));
 
-                return csvData;
+                return new Tuple<List<string>, List<string>>(csvData, new List<string>());
             }
             catch (Exception e)
             {
@@ -96,13 +96,13 @@ namespace SDM.Utilities.DataConverter
             return summedPartnerReportCsv;
         }
 
-        public ClientLog ConvertCsvToClientDataModel(List<string> data, LatencyConversionModel latencyConversionModel)
+        public Tuple<ClientLog, List<string>> ConvertCsvToClientDataModel(List<string> data, LatencyConversionModel latencyConversionModel)
         {
             try
             {
                 if (data == null || !data.Any())
                 {
-                    return new ClientLog();
+                    return new Tuple<ClientLog, List<string>>(new ClientLog(), new List<string>());
                 }
                 if (latencyConversionModel == null)
                 {
@@ -111,7 +111,8 @@ namespace SDM.Utilities.DataConverter
                 }
                 var clientReport = new ClientLog();
                 data.RemoveAt(0);
-                clientReport.ClientReport = data
+
+                var clientReportAndIssues = data
                     .Select(line => LineSplitter(line).ToArray())
                     .Select(lineParams =>
                     {
@@ -126,18 +127,27 @@ namespace SDM.Utilities.DataConverter
                             row.AmountDue = float.Parse(lineParams[16]);
                             row.PaymentTerms = int.Parse(lineParams[14]);
                             row.ClientId = lineParams[20];
-                            return row;
+                            row.ClientNumber = int.Parse(lineParams[5]);
+                            row.CompanyNumber = int.Parse(lineParams[4]);
+                            return new Tuple<ClientModelRow, string>(row, string.Empty);
                         }
                         catch (Exception e)
                         {
-                            MessageBox.Show($"Error parsing content from client file in row: {string.Join(",", lineParams)}. Excpetion: {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return null;
+                            return new Tuple<ClientModelRow, string>(null, $"Error parsing content from client file in row: {string.Join(",", lineParams)}. Excpetion: {e.Message}");
                         }
-                    })
+                    }).ToList();
+
+                clientReport.ClientReport = clientReportAndIssues
+                    .Select(x => x.Item1)
                     .Where(x => x != null)
                     .ToList();
 
-                return clientReport;
+                var issues = clientReportAndIssues
+                    .Select(x => x.Item2)
+                    .Where(x => x != null)
+                    .ToList();
+
+                return new Tuple<ClientLog, List<string>>(clientReport, issues);
             }
             catch (Exception e)
             {
@@ -166,20 +176,20 @@ namespace SDM.Utilities.DataConverter
             }
             catch (Exception)
             {
-                MessageBox.Show($@"Could not parse date : {date} (parsed: {reformatedDate}), format is eu: {dateTimeEu}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw;
+                throw new Exception($@"Could not parse date : {date} (parsed: {reformatedDate}), format is eu: {dateTimeEu}");
             }
         }
 
-        public CenturionLog ConvertCsvToCenturionModel(List<string> data)
+        public Tuple<CenturionLog, List<string>> ConvertCsvToCenturionModel(List<string> data)
         {
             if (data == null || !data.Any())
             {
-                return new CenturionLog();
+                return new Tuple<CenturionLog, List<string>>(new CenturionLog(), new List<string>());
             }
             var centurionReport = new CenturionLog();
             data.RemoveAt(0);
-            centurionReport.CenturionReport = data
+
+            var centurionReportAndIssues = data
                 .Select(line => LineSplitter(line).ToArray())
                 .Select(lineParams =>
                 {
@@ -190,18 +200,29 @@ namespace SDM.Utilities.DataConverter
                         row.PaymentDate = TryParsingDateTime(lineParams[5], true);
                         row.ClientId = lineParams[0];
                         row.AmountPaid = float.Parse(lineParams[7]);
-                        return row;
+
+                        return new Tuple<CenturionModelRow, string>(row, string.Empty);
                     }
                     catch (Exception e)
                     {
-                        MessageBox.Show($"Error parsing content from centurion file in row: {string.Join(",", lineParams)}. Excpetion: {e.Message}", "Reports manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return null;
+                        return new Tuple<CenturionModelRow, string>(null, $"Error parsing content from centurion file in row: {string.Join(",", lineParams)}. Excpetion: {e.Message}");
                     }
-                })
+                }).ToList();
+
+            centurionReport.CenturionReport =
+                centurionReportAndIssues
+                .Select(x => x.Item1)
                 .Where(x => x != null)
                 .ToList();
 
-            return centurionReport;
+            var issues = 
+                centurionReportAndIssues
+                    .Select(x => x.Item2)
+                    .Where(x => x != null)
+                    .ToList();
+
+
+            return new Tuple<CenturionLog, List<string>>(centurionReport, issues);
         }
 
         public LatencyConversionModel ConvertCsvToLatencyConversionModel(List<string> data)

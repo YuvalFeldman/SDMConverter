@@ -5,6 +5,6 @@ namespace SDM.Utilities.Calculators.IssuesReportCalculator
 {
     public interface IIssuesReportCalculator
     {
-        void OutputInvoiceNumberIssues(FullDatabaseModel fullDatabase, List<CenturionLog> data);
+        List<string> GetReportIssues(List<string> clientLogNames, List<string> additionalIssues, string latencyTable = null);
     }
 }

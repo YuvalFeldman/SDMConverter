@@ -7,6 +7,7 @@ using SDM.DAL.ReportsDal;
 using SDM.Forms.ContentForms.ExportMenuForms;
 using SDM.Forms.ContentForms.ImportForms;
 using SDM.Utilities.Calculators.FullReportCalculator;
+using SDM.Utilities.Calculators.IssuesReportCalculator;
 using SDM.Utilities.Calculators.SummedReportCalculator;
 
 namespace SDM.Forms
@@ -16,6 +17,7 @@ namespace SDM.Forms
         private readonly IFullReportCalculator _fullReportCalculator;
         private readonly ISummedReportCalculator _summedReportCalculator;
         private readonly IReportsDal _reportsDal;
+        private readonly IIssuesReportCalculator _issuesReportCalculator;
 
         private readonly FullExportMenu _fullExportMenu;
         private readonly SummedExportMenu _summedExportMenu;
@@ -31,6 +33,7 @@ namespace SDM.Forms
         private List<string> _fullReport = new List<string>();
         private Dictionary<string, List<string>> _summedReport = new Dictionary<string, List<string>>();
         private List<string> _report = new List<string>();
+        private List<string> _issues = new List<string>();
 
         [DllImport("User32.dll")]
         public static extern bool ReleaseCapture();
@@ -42,7 +45,7 @@ namespace SDM.Forms
             SummedExportMenu summedExportMenu, 
             ImportCenturionForm importCenturionForm,
             ImportClientForm importClientForm, 
-            ImportLatencyForm importLatencyForm, IFullReportCalculator fullReportCalculator, ISummedReportCalculator summedReportCalculator, IReportsDal reportsDal)
+            ImportLatencyForm importLatencyForm, IFullReportCalculator fullReportCalculator, ISummedReportCalculator summedReportCalculator, IReportsDal reportsDal, IIssuesReportCalculator issuesReportCalculator)
         {
             _fullExportMenu = fullExportMenu;
             _summedExportMenu = summedExportMenu;
@@ -52,6 +55,7 @@ namespace SDM.Forms
             _fullReportCalculator = fullReportCalculator;
             _summedReportCalculator = summedReportCalculator;
             _reportsDal = reportsDal;
+            _issuesReportCalculator = issuesReportCalculator;
 
             InitializeComponent();
 
@@ -74,25 +78,25 @@ namespace SDM.Forms
             UpdateImportPanel();
             UpdateExportMenuForm();
 
-            _summedExportMenu.summedTablesComboBox.SelectedIndexChanged += new EventHandler(this.ChangedChosenSummedReport);
-            _importCenturionForm.updateUsagesButton.Click += new EventHandler((s, e) =>
+            _summedExportMenu.summedTablesComboBox.SelectedIndexChanged += this.ChangedChosenSummedReport;
+            _importCenturionForm.updateUsagesButton.Click += (s, e) =>
             {
                 GetUpdatedReport();
                 UpdateExcelContentPanel();
-            });
-            _importClientForm.updateUsagesButton.Click += new EventHandler((s, e) =>
+            };
+            _importClientForm.updateUsagesButton.Click += (s, e) =>
             {
                 GetUpdatedReport();
                 UpdateExcelContentPanel();
-            });
-            _importLatencyForm.updateUsagesButton.Click += new EventHandler((s, e) =>
+            };
+            _importLatencyForm.updateUsagesButton.Click += (s, e) =>
             {
                 GetUpdatedReport();
                 UpdateExcelContentPanel();
-            });
-            _fullExportMenu.ExportFullReportButton.Click += new EventHandler(this.ExportSinlgeReport);
-            _summedExportMenu.exportSummedReportButton.Click += new EventHandler(this.ExportSinlgeReport);
-            _summedExportMenu.exportAllReports.Click += new EventHandler(this.ExportAllSummedReports);
+            };
+            _fullExportMenu.ExportFullReportButton.Click += this.ExportSinlgeReport;
+            _summedExportMenu.exportSummedReportButton.Click += this.ExportSinlgeReport;
+            _summedExportMenu.exportAllReports.Click += this.ExportAllSummedReports;
 
             ExcelContentPanel.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
         }
@@ -216,14 +220,20 @@ namespace SDM.Forms
 
             if (ExportTypeComboBox.SelectedIndex.Equals(0))
             {
-                _fullReport = _fullReportCalculator.GetFullReport(centurionLogNames, clientLogNames, latencyConversionTableName);
+                var fullReportAndIssues = _fullReportCalculator.GetFullReport(centurionLogNames, clientLogNames, latencyConversionTableName);
+                _fullReport = fullReportAndIssues.Item1;
+                var additionalIssues = fullReportAndIssues.Item2;
                 _report = _fullReport;
+                _issues = _issuesReportCalculator.GetReportIssues(clientLogNames, additionalIssues, latencyConversionTableName);
             }
             else
             {
-                _summedReport = _summedReportCalculator.GetSummedReport(centurionLogNames, clientLogNames, latencyConversionTableName);
+                var summedReportAndIssues = _summedReportCalculator.GetSummedReport(centurionLogNames, clientLogNames, latencyConversionTableName);
+                _summedReport = summedReportAndIssues.Item1;
+                var additionalIssues = summedReportAndIssues.Item2;
                 _report = _summedReport.Any() ? _summedReport[_summedReport.Keys.First()] : new List<string>();
                 _summedExportMenu.UpdateSummedComboBoxOptions(_summedReport.Keys.ToList());
+                _issues = _issuesReportCalculator.GetReportIssues(clientLogNames, additionalIssues, latencyConversionTableName);
             }
         }
 
@@ -240,12 +250,12 @@ namespace SDM.Forms
 
         private void ExportSinlgeReport(object sender, EventArgs e)
         {
-            _reportsDal.ExportReport(_report);
+            _reportsDal.ExportReport(_report, _issues);
         }
 
         private void ExportAllSummedReports(object sender, EventArgs e)
         {
-            _reportsDal.ExportReports(_summedReport);
+            _reportsDal.ExportReports(_summedReport, _issues);
         }
     }
 }
