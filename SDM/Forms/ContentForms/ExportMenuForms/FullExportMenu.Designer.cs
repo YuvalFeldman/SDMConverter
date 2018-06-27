@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.ExportFullReportButton = new System.Windows.Forms.Button();
+            this.ExportIssuesButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ExportFullReportButton
@@ -40,11 +41,21 @@
             this.ExportFullReportButton.Text = "Export report";
             this.ExportFullReportButton.UseVisualStyleBackColor = true;
             // 
+            // ExportIssuesButton
+            // 
+            this.ExportIssuesButton.Location = new System.Drawing.Point(563, 1);
+            this.ExportIssuesButton.Name = "ExportIssuesButton";
+            this.ExportIssuesButton.Size = new System.Drawing.Size(80, 23);
+            this.ExportIssuesButton.TabIndex = 24;
+            this.ExportIssuesButton.Text = "Export issues";
+            this.ExportIssuesButton.UseVisualStyleBackColor = true;
+            // 
             // FullExportMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(655, 25);
+            this.Controls.Add(this.ExportIssuesButton);
             this.Controls.Add(this.ExportFullReportButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FullExportMenu";
@@ -55,5 +66,6 @@
 
         #endregion
         public System.Windows.Forms.Button ExportFullReportButton;
+        public System.Windows.Forms.Button ExportIssuesButton;
     }
 }

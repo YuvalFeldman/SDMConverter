@@ -14,7 +14,7 @@ namespace SDM.DAL.ReportsDal
             _fileSystemController = fileSystemController;
         }
 
-        public void ExportReport(List<string> report, List<string> issues)
+        public void ExportReport(List<string> report)
         {
             if (report == null || !report.Any())
             {
@@ -25,11 +25,10 @@ namespace SDM.DAL.ReportsDal
             if (!string.IsNullOrEmpty(reportDestination))
             {
                 _fileSystemController.WriteDataToFile(reportDestination, report);
-                _fileSystemController.WriteDataToFile($"{Path.GetDirectoryName(reportDestination)}\\Issues.txt", issues);
             }
         }
 
-        public void ExportReports(Dictionary<string, List<string>> reports, List<string> issues)
+        public void ExportReports(Dictionary<string, List<string>> reports)
         {
             if (reports == null || !reports.Any())
             {
@@ -51,8 +50,20 @@ namespace SDM.DAL.ReportsDal
 
                 _fileSystemController.WriteDataToFile($"{reportDestination}\\{report.Key}.csv", report.Value);
             }
+        }
 
-            _fileSystemController.WriteDataToFile($"{reportDestination}\\Issues.txt", issues);
+        public void ExportIssuesReport(List<string> issues)
+        {
+            if (issues == null || !issues.Any())
+            {
+                return;
+            }
+
+            var reportDestination = _fileSystemController.GetSaveDialogFilePath();
+            if (!string.IsNullOrEmpty(reportDestination))
+            {
+                _fileSystemController.WriteDataToFile($"{Path.GetDirectoryName(reportDestination)}\\Issues.txt", issues);
+            }
         }
     }
 }

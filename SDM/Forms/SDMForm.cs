@@ -99,6 +99,9 @@ namespace SDM.Forms
             _summedExportMenu.exportAllReports.Click += this.ExportAllSummedReports;
 
             ExcelContentPanel.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+
+            _fullExportMenu.ExportIssuesButton.Click += (s, e) => ExportIssuesReport();
+            _summedExportMenu.ExportIssuesButton.Click += (s, e) => ExportIssuesReport();
         }
 
         private void TopBarMenu_MouseDown(object sender, MouseEventArgs e)
@@ -250,12 +253,17 @@ namespace SDM.Forms
 
         private void ExportSinlgeReport(object sender, EventArgs e)
         {
-            _reportsDal.ExportReport(_report, _issues);
+            _reportsDal.ExportReport(_report);
         }
 
         private void ExportAllSummedReports(object sender, EventArgs e)
         {
-            _reportsDal.ExportReports(_summedReport, _issues);
+            _reportsDal.ExportReports(_summedReport);
+        }
+
+        private void ExportIssuesReport()
+        {
+            _reportsDal.ExportIssuesReport(_issues);
         }
     }
 }

@@ -31,6 +31,7 @@
             this.exportSummedReportButton = new System.Windows.Forms.Button();
             this.summedTablesComboBox = new System.Windows.Forms.ComboBox();
             this.exportAllReports = new System.Windows.Forms.Button();
+            this.ExportIssuesButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // exportSummedReportButton
@@ -59,11 +60,21 @@
             this.exportAllReports.Text = "Export all reports";
             this.exportAllReports.UseVisualStyleBackColor = true;
             // 
+            // ExportIssuesButton
+            // 
+            this.ExportIssuesButton.Location = new System.Drawing.Point(563, 1);
+            this.ExportIssuesButton.Name = "ExportIssuesButton";
+            this.ExportIssuesButton.Size = new System.Drawing.Size(80, 23);
+            this.ExportIssuesButton.TabIndex = 31;
+            this.ExportIssuesButton.Text = "Export issues";
+            this.ExportIssuesButton.UseVisualStyleBackColor = true;
+            // 
             // SummedExportMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(655, 25);
+            this.Controls.Add(this.ExportIssuesButton);
             this.Controls.Add(this.exportAllReports);
             this.Controls.Add(this.summedTablesComboBox);
             this.Controls.Add(this.exportSummedReportButton);
@@ -79,5 +90,6 @@
         public System.Windows.Forms.Button exportSummedReportButton;
         public System.Windows.Forms.ComboBox summedTablesComboBox;
         public System.Windows.Forms.Button exportAllReports;
+        public System.Windows.Forms.Button ExportIssuesButton;
     }
 }
