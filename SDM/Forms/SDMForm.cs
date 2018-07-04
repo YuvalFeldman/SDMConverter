@@ -263,6 +263,7 @@ namespace SDM.Forms
 
         private void ExportIssuesReport()
         {
+            GetUpdatedReport();
             _reportsDal.ExportIssuesReport(_issues);
         }
     }

@@ -62,7 +62,7 @@ namespace SDM.DAL.ReportsDal
             var reportDestination = _fileSystemController.GetSaveDialogFilePath();
             if (!string.IsNullOrEmpty(reportDestination))
             {
-                _fileSystemController.WriteDataToFile($"{Path.GetDirectoryName(reportDestination)}\\Issues.txt", issues);
+                _fileSystemController.WriteDataToFile(reportDestination, issues);
             }
         }
     }
